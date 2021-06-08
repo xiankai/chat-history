@@ -15,7 +15,7 @@ export type SourceMetadata = object;
 export type ChatLogFormat = [LineNumber, Timestamp, Message, Source, SourceMetadata];
 
 export default abstract class BaseDatasource {
-    abstract addToIndex(terms: Term[], timestamp: Timestamp, line: LineNumber): void;
+    abstract addToIndex(line_number: LineNumber, timestamp: Timestamp, terms: Term[]): void;
 
     abstract addToStorage(line_number: LineNumber, timestamp: Timestamp, message: Message, source: Source, source_metadata: SourceMetadata): void;
 

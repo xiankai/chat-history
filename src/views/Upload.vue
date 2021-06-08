@@ -21,10 +21,10 @@ export default {
             if (i < this.$formatter.offset()) continue;
             const line = lines[i];
             try {
-              const [line_number, timestamp, message, source, source_metadata] = this.$formatter.formatMessage(line);
+              const [line_number, timestamp, message, source, source_metadata] = this.$formatter.formatMessage(i, line);
               const terms = this.$tokenizer.parseMessage(message);
-              this.$datasource.addToIndex(terms, timestamp, line_number);
-              this.$datasource.addToStorage(timestamp, message, source, source_metadata);
+              this.$datasource.addToIndex(line_number, timestamp, terms);
+              this.$datasource.addToStorage(line_number, timestamp, message, source, source_metadata);
             } catch (e) {
               console.log('Unable to parse', line);
               console.error(e);

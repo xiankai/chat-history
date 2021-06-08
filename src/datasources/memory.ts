@@ -1,4 +1,5 @@
 import has from 'lodash/has';
+import get from 'lodash/get';
 import set from 'lodash/set';
 import { parseTimestampIntoDateBucket } from '../utils/date';
 import BaseDatasource, { Term, DateBucketReference, LineNumber, ChatLogFormat, Timestamp, Message, Source, SourceMetadata, SearchQuery } from './base';
@@ -28,14 +29,14 @@ export default class MemoryDatasource extends BaseDatasource {
         logs: {},
     };
 
-    addToIndex(terms: Term[], timestamp: Timestamp, line: LineNumber) {
+    addToIndex(line_number: LineNumber, timestamp: Timestamp, terms: Term[]) {
         const date = parseTimestampIntoDateBucket(timestamp);
         for (const i in terms) {
             const term = terms[i];
             if (this.store.index[term]) {
-                this.store.index[term].push([date, line]);
+                this.store.index[term].push([date, line_number]);
             } else {
-                this.store.index[term] = [[date, line]];
+                this.store.index[term] = [[date, line_number]];
             }
         }
     }
@@ -52,7 +53,7 @@ export default class MemoryDatasource extends BaseDatasource {
 
     retrieveBucketFromStorage(date: DateBucketReference): ChatLogFormat[] {
         const { year, month, day } = date;
-        const date_bucket = this.store.logs[year][month][day];
+        const date_bucket = get(this.store.logs, [year,month,day], []);
         return date_bucket;
     }
 

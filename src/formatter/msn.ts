@@ -1,4 +1,4 @@
-import { ChatLogFormat, Message, Term } from "@/datasources/base";
+import { ChatLogFormat, LineNumber, Message, Term } from "@/datasources/base";
 import BaseFormatter from './base';
 import { sscanf } from 'scanf';
 
@@ -16,13 +16,13 @@ export default class MSNFormatter extends BaseFormatter {
         return 6;
     }
 
-    formatMessage(line: string): ChatLogFormat {
+    formatMessage(line_number: LineNumber, line: string): ChatLogFormat {
         const result = line.match(this.format());
         const [match, hour, minute, second, meridian, sender, message] = result!;
         const timestamp = new Date();
         timestamp.setHours(+hour + (meridian === 'PM' ? 12 : 0));
         timestamp.setMinutes(+minute);
         timestamp.setSeconds(+second);
-        return [1, timestamp, message as string, this.source(), { sender }];
+        return [line_number, timestamp, message as string, this.source(), { sender }];
     }
 }
