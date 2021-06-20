@@ -1,10 +1,10 @@
 <template>
   <div>This is the chat history page</div>
-  <div id="messages">{{ logMessages }}</div>
+  <component :is="AsyncViewerComponent" :logs="logs" />
 </template>
 
 <script>
-
+import { defineAsyncComponent } from "@vue/runtime-core";
 const date = new Date();
 
 export default {
@@ -15,21 +15,21 @@ export default {
       month: date.getMonth() + 1,
       day: date.getDate() + 1,
     });
-    return {logs};
+    return { logs };
   },
   computed: {
-    logMessages() {
-      return this.logs.map(log => {
-        return log.join(',');
-      }).join('\n');
-    }
+    AsyncViewerComponent() {
+      return defineAsyncComponent(() =>
+        import(`../components/viewer/${this.$viewerComponent}.vue`)
+      );
+    },
   },
-}
+};
 </script>
 
 <style>
-  #messages {
-    white-space: pre-line;
-    text-align: left;
-  }
+#messages {
+  white-space: pre-line;
+  text-align: left;
+}
 </style>
