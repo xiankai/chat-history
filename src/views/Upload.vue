@@ -4,25 +4,20 @@
 </template>
 
 <script>
-export default {
-  name: "Upload",
-  // components: {
-  //   Upload
-  // }
-  mounted() {
-    const handleFiles = () => {
-      const files = this.$refs.upload.files;
-      files.forEach((file) => {
-        const fr = new FileReader();
-        fr.onload = (e) => {
-          const lines = e.target.result.split("\n");
-          for (let i in lines) {
-            if (i < this.$formatter.offset()) continue;
-            const line = lines[i];
-            try {
-              if (!line) continue;
+  export default {
+    name: "Upload",
+    mounted() {
+      const handleFiles = () => {
+        const files = this.$refs.upload.files;
+        files.forEach((file) => {
+          const fr = new FileReader();
+          fr.onload = (e) => {
+            const { messages } = this.$formatter.formatChatLog(
+              e.target.result.trim()
+            );
+            messages.forEach((chat_line) => {
               const [line_number, timestamp, message, source, source_metadata] =
-                this.$formatter.formatMessage(i, line);
+                chat_line;
               const terms = this.$tokenizer.parseMessage(message);
               this.$datasource.addToIndex(line_number, timestamp, terms);
               this.$datasource.addToStorage(
@@ -32,16 +27,12 @@ export default {
                 source,
                 source_metadata
               );
-            } catch (e) {
-              console.log("Unable to parse", line);
-              console.error(e);
-            }
-          }
-        };
-        fr.readAsText(file);
-      });
-    };
-    this.$refs.upload.addEventListener("change", handleFiles, false);
-  },
-};
+            });
+          };
+          fr.readAsText(file);
+        });
+      };
+      this.$refs.upload.addEventListener("change", handleFiles, false);
+    },
+  };
 </script>

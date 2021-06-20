@@ -16,6 +16,13 @@ export type SourceMetadataEntry = {
 };
 export type SourceMetadata = SourceMetadataEntry[];
 
+export type Participant = {
+  identifier: string;
+  display_name: string;
+};
+
+export type ChatLogMetadata = object;
+
 export type ChatLogFormat = [
   LineNumber,
   Timestamp,
@@ -23,6 +30,11 @@ export type ChatLogFormat = [
   Source,
   SourceMetadata
 ];
+
+export type ChatLog = {
+  metadata: ChatLogMetadata;
+  messages: ChatLogFormat[];
+};
 
 export default abstract class BaseDatasource {
   abstract addToIndex(
