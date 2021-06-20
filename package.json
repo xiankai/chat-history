@@ -44,7 +44,9 @@
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-multiple-template-root": 0
+    }
   },
   "browserslist": [
     "> 1%",

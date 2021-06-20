@@ -8,7 +8,7 @@
 const date = new Date();
 
 export default {
-  name: 'Viewer',
+  name: "Viewer",
   data() {
     const logs = this.$datasource.retrieveBucketFromStorage({
       year: date.getFullYear(),
