@@ -18,9 +18,7 @@ import { push_safe } from '@/utils';
 
 export default class LocalStorageDatasource extends BaseDatasource {
   private getStorageItem = (key: string, default_value = {}) => {
-    return (
-      JSON.parse(window.localStorage.getItem(key) || '{}') || default_value
-    );
+    return JSON.parse(window.localStorage.getItem(key)!) || default_value;
   };
   private setStorageItem = (key: string, value: any) => {
     return window.localStorage.setItem(key, JSON.stringify(value));
@@ -50,6 +48,15 @@ export default class LocalStorageDatasource extends BaseDatasource {
     source: Source,
     source_metadata: SourceMetadata
   ) {
+    const recipients = this.getStorageItem('recipients', '');
+    const recipient_array = recipients.split(',');
+    if (!recipient_array.includes(recipient)) {
+      this.setStorageItem(
+        'recipients',
+        [...recipient_array, recipient].join(',')
+      );
+    }
+
     const stored_logs = this.getStorageItem('logs');
     const { year, month, day } = parseTimestampIntoDateBucket(timestamp);
     const chat_log: ChatLogFormat = [
@@ -61,6 +68,13 @@ export default class LocalStorageDatasource extends BaseDatasource {
     ];
     push_safe(stored_logs, [recipient, year, month, day], chat_log);
     this.setStorageItem('logs', stored_logs);
+  }
+
+  retrieveBucketListFromStorage(): Recipient[] {
+    const recipients = this.getStorageItem('recipients', '')
+      .split(',')
+      .filter(Boolean);
+    return recipients;
   }
 
   retrieveBucketFromStorage(

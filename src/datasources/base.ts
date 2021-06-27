@@ -54,6 +54,8 @@ export default abstract class BaseDatasource {
     source_metadata: SourceMetadata
   ): void;
 
+  abstract retrieveBucketListFromStorage(): Recipient[];
+
   abstract retrieveBucketFromStorage(
     recipient: Recipient,
     date: DateBucketReference

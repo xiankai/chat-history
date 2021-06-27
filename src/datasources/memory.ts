@@ -31,12 +31,14 @@ interface DateBuckets {
 }
 
 interface MemoryDatasourceStorage {
+  recipients: Recipient[];
   index: MemoryDatasourceIndex;
   logs: DateBuckets;
 }
 
 export default class MemoryDatasource extends BaseDatasource {
   store: MemoryDatasourceStorage = {
+    recipients: [],
     index: {},
     logs: {},
   };
@@ -62,6 +64,10 @@ export default class MemoryDatasource extends BaseDatasource {
     source: Source,
     source_metadata: SourceMetadata
   ) {
+    if (this.store.recipients.includes(recipient)) {
+      this.store.recipients.push(recipient);
+    }
+
     const { year, month, day } = parseTimestampIntoDateBucket(timestamp);
     const chat_log: ChatLogFormat = [
       line_number,
@@ -71,6 +77,10 @@ export default class MemoryDatasource extends BaseDatasource {
       source_metadata,
     ];
     push_safe(this.store.logs, [recipient, year, month, day], chat_log);
+  }
+
+  retrieveBucketListFromStorage(): Recipient[] {
+    return this.store.recipients;
   }
 
   retrieveBucketFromStorage(
