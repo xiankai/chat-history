@@ -20,17 +20,17 @@
               const [line_number, timestamp, message, source, source_metadata] =
                 chat_line;
               const terms = this.$tokenizer.parseMessage(message);
-              this.$datasource.addToIndex(
-                { recipient, line_number, timestamp },
-                terms
-              );
-              this.$datasource.addToStorage(
+              const inserted_index = this.$datasource.addToStorage(
                 recipient,
                 line_number,
                 timestamp,
                 message,
                 source,
                 source_metadata
+              );
+              this.$datasource.addToIndex(
+                { recipient, inserted_index, timestamp },
+                terms
               );
             });
           };

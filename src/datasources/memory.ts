@@ -44,14 +44,14 @@ export default class MemoryDatasource extends BaseDatasource {
   };
 
   addToIndex(index: Index, terms: Term[]) {
-    const { line_number, recipient, timestamp } = index;
+    const { inserted_index, recipient, timestamp } = index;
     const date = parseTimestampIntoDateBucket(timestamp);
     for (const i in terms) {
       const term = terms[i];
       if (this.store.index[term]) {
-        this.store.index[term].push([recipient, date, line_number]);
+        this.store.index[term].push([recipient, date, inserted_index]);
       } else {
-        this.store.index[term] = [[recipient, date, line_number]];
+        this.store.index[term] = [[recipient, date, inserted_index]];
       }
     }
   }

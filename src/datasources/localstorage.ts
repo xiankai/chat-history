@@ -30,16 +30,12 @@ export default class LocalStorageDatasource extends BaseDatasource {
   };
 
   addToIndex(index: Index, terms: Term[]) {
-    const { line_number, recipient, timestamp } = index;
+    const { inserted_index, recipient, timestamp } = index;
     const stored_terms = this.getStorageItem('terms');
     const date = parseTimestampIntoDateBucket(timestamp);
     for (const i in terms) {
       const term = terms[i];
-      if (stored_terms[term]) {
-        stored_terms[term].push([recipient, date, line_number]);
-      } else {
-        stored_terms[term] = [[recipient, date, line_number]];
-      }
+      push_safe(stored_terms, [term], [recipient, date, inserted_index]);
     }
 
     this.setStorageItem('terms', stored_terms);
@@ -71,8 +67,13 @@ export default class LocalStorageDatasource extends BaseDatasource {
       source,
       source_metadata,
     ];
-    push_safe(stored_logs, [recipient, this.getDateKey(date)], chat_log);
+    const inserted_index = push_safe(
+      stored_logs,
+      [recipient, this.getDateKey(date)],
+      chat_log
+    );
     this.setStorageItem('logs', stored_logs);
+    return inserted_index;
   }
 
   retrieveBucketListFromStorage(): Recipient[] {
@@ -98,15 +99,18 @@ export default class LocalStorageDatasource extends BaseDatasource {
   retrieveMessageFromStorage(
     recipient: Recipient,
     date: DateBucketReference,
-    message_index: number
+    inserted_index: number
   ): ChatLogFormat {
     const stored_logs = this.getStorageItem('logs');
 
-    return get(stored_logs, [recipient, this.getDateKey(date), message_index]);
+    return get(stored_logs, [recipient, this.getDateKey(date), inserted_index]);
   }
 
-  searchStorage(query: SearchQuery): SearchResult[] {
+  searchStorage(query: SearchQuery): ChatLogFormat[] {
     const stored_indices = this.getStorageItem('terms');
-    return stored_indices[query];
+    return ((stored_indices[query] as SearchResult[]) || []).map(
+      ([recipient, date, inserted_index]) =>
+        this.retrieveMessageFromStorage(recipient, date, inserted_index) || []
+    );
   }
 }

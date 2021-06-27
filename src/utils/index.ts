@@ -7,10 +7,11 @@ export const push_safe = (
   obj: object,
   key: string | (number | string)[],
   val: any
-) => {
+): number => {
   if (has(obj, key)) {
-    get(obj, key).push(val);
+    return get(obj, key).push(val) - 1;
   } else {
     set(obj, key, [val]);
+    return 0;
   }
 };

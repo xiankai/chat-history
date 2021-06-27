@@ -34,7 +34,7 @@ export type ChatLog = {
 
 export type Index = {
   recipient: string;
-  line_number: LineNumber;
+  inserted_index: number;
   timestamp: Timestamp;
 };
 
