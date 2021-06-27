@@ -12,15 +12,20 @@
         files.forEach((file) => {
           const fr = new FileReader();
           fr.onload = (e) => {
-            const { messages } = this.$formatter.formatChatLog(
+            const { metadata, messages } = this.$formatter.formatChatLog(
               e.target.result.trim()
             );
+            const recipient = metadata.participants[1].identifier;
             messages.forEach((chat_line) => {
               const [line_number, timestamp, message, source, source_metadata] =
                 chat_line;
               const terms = this.$tokenizer.parseMessage(message);
-              this.$datasource.addToIndex(line_number, timestamp, terms);
+              this.$datasource.addToIndex(
+                { recipient, line_number, timestamp },
+                terms
+              );
               this.$datasource.addToStorage(
+                recipient,
                 line_number,
                 timestamp,
                 message,

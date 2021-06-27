@@ -11,11 +11,11 @@
   export default {
     name: "Viewer",
     data() {
-      return { date };
+      return { sender: "duvly@hotmail.com", date };
     },
     computed: {
       logs() {
-        const logs = this.$datasource.retrieveBucketFromStorage({
+        const logs = this.$datasource.retrieveBucketFromStorage(this.sender, {
           year: this.date.getFullYear(),
           month: this.date.getMonth() + 1,
           day: this.date.getDate() + 1,

@@ -1,6 +1,4 @@
-import has from 'lodash/has';
 import get from 'lodash/get';
-import set from 'lodash/set';
 import { parseTimestampIntoDateBucket } from '../utils/date';
 import BaseDatasource, {
   Term,
@@ -12,9 +10,11 @@ import BaseDatasource, {
   Source,
   SourceMetadata,
   SearchQuery,
+  Index,
+  SearchResult,
+  Recipient,
 } from './base';
-
-type SearchResult = [DateBucketReference, LineNumber];
+import { push_safe } from '@/utils';
 
 export default class LocalStorageDatasource extends BaseDatasource {
   private getStorageItem = (key: string, default_value = {}) => {
@@ -26,15 +26,16 @@ export default class LocalStorageDatasource extends BaseDatasource {
     return window.localStorage.setItem(key, JSON.stringify(value));
   };
 
-  addToIndex(line_number: LineNumber, timestamp: Timestamp, terms: Term[]) {
+  addToIndex(index: Index, terms: Term[]) {
+    const { line_number, recipient, timestamp } = index;
     const stored_terms = this.getStorageItem('terms');
     const date = parseTimestampIntoDateBucket(timestamp);
     for (const i in terms) {
       const term = terms[i];
       if (stored_terms[term]) {
-        stored_terms[term].push([date, line_number]);
+        stored_terms[term].push([recipient, date, line_number]);
       } else {
-        stored_terms[term] = [[date, line_number]];
+        stored_terms[term] = [[recipient, date, line_number]];
       }
     }
 
@@ -42,6 +43,7 @@ export default class LocalStorageDatasource extends BaseDatasource {
   }
 
   addToStorage(
+    recipient: Recipient,
     line_number: LineNumber,
     timestamp: Timestamp,
     message: Message,
@@ -57,30 +59,29 @@ export default class LocalStorageDatasource extends BaseDatasource {
       source,
       source_metadata,
     ];
-    if (has(stored_logs, [year, month, day])) {
-      stored_logs[year][month][day].push(chat_log);
-    } else {
-      set(stored_logs, [year, month, day].map(String), [chat_log]);
-    }
+    push_safe(stored_logs, [recipient, year, month, day], chat_log);
     this.setStorageItem('logs', stored_logs);
   }
 
-  retrieveBucketFromStorage(date: DateBucketReference): ChatLogFormat[] {
+  retrieveBucketFromStorage(
+    recipient: Recipient,
+    date: DateBucketReference
+  ): ChatLogFormat[] {
     const stored_logs = this.getStorageItem('logs');
     const { year, month, day } = date;
-    const date_bucket = get(stored_logs, [year, month, day], []);
+    const date_bucket = get(stored_logs, [recipient, year, month, day], []);
     return date_bucket;
   }
 
   retrieveMessageFromStorage(
+    recipient: Recipient,
     date: DateBucketReference,
     message_index: number
   ): ChatLogFormat {
     const stored_logs = this.getStorageItem('logs');
 
     const { year, month, day } = date;
-    const date_bucket = stored_logs[year][month][day];
-    return date_bucket[message_index];
+    return get(stored_logs, [recipient, year, month, day, message_index]);
   }
 
   searchStorage(query: SearchQuery): SearchResult[] {

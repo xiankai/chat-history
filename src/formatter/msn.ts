@@ -6,6 +6,8 @@ import {
 } from '@/datasources/base';
 import BaseFormatter from './base';
 
+class ParsingError extends Error {}
+
 export default class MSNFormatter extends BaseFormatter {
   source() {
     return 'MSN';
@@ -94,7 +96,7 @@ export default class MSNFormatter extends BaseFormatter {
       timestamp,
       message as string,
       this.source(),
-      [{ key: 'sender', value: sender }],
+      { sender },
     ];
   }
 
@@ -113,12 +115,28 @@ export default class MSNFormatter extends BaseFormatter {
         line_counter += 3; // spacing between sessions
       }
 
-      messages.push(
-        ...lines.slice(6).map((line) => {
-          line_counter++;
-          return this.formatMessage(line_counter, line, metadata);
-        })
-      );
+      let chat_log: ChatLogFormat;
+      lines.slice(6).forEach((line) => {
+        line_counter++;
+        try {
+          const temp_chat_log = this.formatMessage(
+            line_counter,
+            line,
+            metadata
+          );
+
+          // new entry, so we push the old entry and start a new one
+          if (chat_log) {
+            messages.push(chat_log);
+          }
+          chat_log = temp_chat_log;
+        } catch (e) {
+          // old entry, so we add to it
+          if (e instanceof ParsingError) {
+            chat_log[2] += line.slice(13);
+          }
+        }
+      });
     });
 
     return {
