@@ -1,5 +1,6 @@
 <template>
   <div>This is the chat history page</div>
+  <v-date-picker v-model="date" />
   <component :is="AsyncViewerComponent" :logs="logs" />
 </template>
 
@@ -10,14 +11,17 @@
   export default {
     name: "Viewer",
     data() {
-      const logs = this.$datasource.retrieveBucketFromStorage({
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: date.getDate() + 1,
-      });
-      return { logs };
+      return { date };
     },
     computed: {
+      logs() {
+        const logs = this.$datasource.retrieveBucketFromStorage({
+          year: this.date.getFullYear(),
+          month: this.date.getMonth() + 1,
+          day: this.date.getDate() + 1,
+        });
+        return logs;
+      },
       AsyncViewerComponent() {
         return defineAsyncComponent(() =>
           import(`../components/viewer/${this.$viewerComponent}.vue`)

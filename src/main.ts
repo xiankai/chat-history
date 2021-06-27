@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import VCalendar from 'v-calendar';
 import App from './App.vue';
 import LocalStorageDatasource from './datasources/localstorage';
 import WhitespaceTokenizer from './tokenizers/whitespace';
@@ -11,7 +12,10 @@ app.config.globalProperties.$formatter = new MSNFormatter();
 app.config.globalProperties.$tokenizer = new WhitespaceTokenizer();
 app.config.globalProperties.$datasource = new LocalStorageDatasource();
 app.config.globalProperties.$viewerComponent = 'Plain';
-app.use(router).mount('#app');
+app
+  .use(VCalendar, {})
+  .use(router)
+  .mount('#app');
 
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
