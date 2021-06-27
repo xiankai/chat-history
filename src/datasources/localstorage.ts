@@ -24,6 +24,11 @@ export default class LocalStorageDatasource extends BaseDatasource {
     return window.localStorage.setItem(key, JSON.stringify(value));
   };
 
+  private getDateKey = (date: DateBucketReference): string => {
+    const { year, month, day } = date;
+    return [year, month, day].join('-');
+  };
+
   addToIndex(index: Index, terms: Term[]) {
     const { line_number, recipient, timestamp } = index;
     const stored_terms = this.getStorageItem('terms');
@@ -58,7 +63,7 @@ export default class LocalStorageDatasource extends BaseDatasource {
     }
 
     const stored_logs = this.getStorageItem('logs');
-    const { year, month, day } = parseTimestampIntoDateBucket(timestamp);
+    const date = parseTimestampIntoDateBucket(timestamp);
     const chat_log: ChatLogFormat = [
       line_number,
       timestamp,
@@ -66,7 +71,7 @@ export default class LocalStorageDatasource extends BaseDatasource {
       source,
       source_metadata,
     ];
-    push_safe(stored_logs, [recipient, year, month, day], chat_log);
+    push_safe(stored_logs, [recipient, this.getDateKey(date)], chat_log);
     this.setStorageItem('logs', stored_logs);
   }
 
@@ -82,8 +87,11 @@ export default class LocalStorageDatasource extends BaseDatasource {
     date: DateBucketReference
   ): ChatLogFormat[] {
     const stored_logs = this.getStorageItem('logs');
-    const { year, month, day } = date;
-    const date_bucket = get(stored_logs, [recipient, year, month, day], []);
+    const date_bucket = get(
+      stored_logs,
+      [recipient, this.getDateKey(date)],
+      []
+    );
     return date_bucket;
   }
 
@@ -94,8 +102,7 @@ export default class LocalStorageDatasource extends BaseDatasource {
   ): ChatLogFormat {
     const stored_logs = this.getStorageItem('logs');
 
-    const { year, month, day } = date;
-    return get(stored_logs, [recipient, year, month, day, message_index]);
+    return get(stored_logs, [recipient, this.getDateKey(date), message_index]);
   }
 
   searchStorage(query: SearchQuery): SearchResult[] {
