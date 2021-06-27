@@ -79,7 +79,7 @@ export default class MSNFormatter extends BaseFormatter {
   ): ChatLogFormat {
     const result = line.match(this.parse_message_line());
     if (!result) {
-      throw new Error(`
+      throw new ParsingError(`
         unable to parse line ${line_number}:
         ${line}
         using regex:
@@ -115,7 +115,7 @@ export default class MSNFormatter extends BaseFormatter {
         line_counter += 3; // spacing between sessions
       }
 
-      let chat_log: ChatLogFormat;
+      let chat_log: ChatLogFormat | undefined;
       lines.slice(6).forEach((line) => {
         line_counter++;
         try {
@@ -133,10 +133,16 @@ export default class MSNFormatter extends BaseFormatter {
         } catch (e) {
           // old entry, so we add to it
           if (e instanceof ParsingError) {
-            chat_log[2] += line.slice(13);
+            chat_log![2] += ' ' + line.slice(13);
+          } else {
+            throw e;
           }
         }
       });
+      // push the last chat message
+      if (chat_log) {
+        messages.push(chat_log);
+      }
     });
 
     return {
