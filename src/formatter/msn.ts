@@ -101,7 +101,7 @@ export default class MSNFormatter extends BaseFormatter {
   }
 
   formatChatLog(input: string): ChatLog {
-    const sessions = input.split('\n\n\n');
+    const sessions = input.split(/[\r\n]{6}/);
 
     let line_counter = 0;
     let metadata: ChatLogMetadata | undefined;
