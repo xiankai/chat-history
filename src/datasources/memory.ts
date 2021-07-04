@@ -14,7 +14,7 @@ import BaseDatasource, {
   SearchResult,
   Recipient,
 } from './base';
-import { push_safe } from '@/utils';
+import { push_safe } from 'utils';
 
 interface MemoryDatasourceIndex {
   [term: string]: SearchResult[];

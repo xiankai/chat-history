@@ -3,7 +3,7 @@ import {
   ChatLogFormat,
   ChatLogMetadata,
   LineNumber,
-} from '@/datasources/base';
+} from 'datasources/base';
 
 export default abstract class BaseFormatter {
   abstract formatHeaders(lines: string[]): ChatLogMetadata;

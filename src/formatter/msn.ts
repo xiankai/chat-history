@@ -3,7 +3,7 @@ import {
   ChatLogFormat,
   ChatLogMetadata,
   LineNumber,
-} from '@/datasources/base';
+} from 'datasources/base';
 import BaseFormatter from './base';
 
 class ParsingError extends Error {}
@@ -30,6 +30,7 @@ export default class MSNFormatter extends BaseFormatter {
   }
 
   formatHeaders(lines: string[]): ChatLogMetadata {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [session_start, _, ...participants_string] = lines;
 
     const session_result = session_start.match(this.parse_session_line());
@@ -41,6 +42,7 @@ export default class MSNFormatter extends BaseFormatter {
         ${this.parse_session_line.toString()}
       `);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [__, day, month, date, year] = session_result!;
 
     const participants = participants_string.map((participant) => {
@@ -55,6 +57,7 @@ export default class MSNFormatter extends BaseFormatter {
         ${this.parse_participant_line.toString()}
       `);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, display_name, identifier] = participant_result!;
       return {
         display_name,
@@ -86,6 +89,7 @@ export default class MSNFormatter extends BaseFormatter {
         ${this.parse_message_line.toString()}
       `);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, hour, minute, second, meridian, sender, message] = result!;
     const timestamp = new Date(metadata.date);
     timestamp.setHours(+hour + (meridian === 'PM' ? 12 : 0));

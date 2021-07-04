@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { parseTimestampIntoDateBucket } from '../utils/date';
+import { parseTimestampIntoDateBucket } from 'utils/date';
 import BaseDatasource, {
   Term,
   DateBucketReference,
@@ -14,7 +14,7 @@ import BaseDatasource, {
   SearchResult,
   Recipient,
 } from './base';
-import { push_safe } from '@/utils';
+import { push_safe } from 'utils';
 
 export default class LocalStorageDatasource extends BaseDatasource {
   private getStorageItem = (key: string, default_value = {}) => {

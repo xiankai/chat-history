@@ -1,5 +1,5 @@
-import { Message, Term } from "@/datasources/base";
+import { Message, Term } from 'datasources/base';
 
 export default abstract class Tokenizer {
-    abstract parseMessage(message: Message): Term[];
+  abstract parseMessage(message: Message): Term[];
 }
