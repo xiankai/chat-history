@@ -108,7 +108,10 @@ export default class MemoryDatasource extends BaseDatasource {
     return message;
   }
 
-  searchStorage(query: SearchQuery): SearchResult[] {
-    return this.store.index[query];
+  searchStorage(query: SearchQuery): ChatLogFormat[] {
+    return ((this.store.index[query] as SearchResult[]) || []).map(
+      ([recipient, date, inserted_index]) =>
+        this.retrieveMessageFromStorage(recipient, date, inserted_index) || []
+    );
   }
 }

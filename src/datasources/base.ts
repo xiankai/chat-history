@@ -67,5 +67,5 @@ export default abstract class BaseDatasource {
     message_id: number
   ): ChatLogFormat;
 
-  abstract searchStorage(query: SearchQuery): void;
+  abstract searchStorage(query: SearchQuery): ChatLogFormat[];
 }
