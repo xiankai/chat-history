@@ -8,7 +8,7 @@ export const Upload = () => {
       const fr = new FileReader();
       fr.onload = (e) => {
         const { metadata, messages } = formatter.formatChatLog(
-          e?.target?.result?.trim()
+          (e?.target?.result as string)?.trim()
         );
         const recipient = metadata.participants[1].identifier;
         messages.forEach((chat_line) => {

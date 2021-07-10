@@ -17,7 +17,10 @@ export type Participant = {
   display_name: string;
 };
 
-export type ChatLogMetadata = object;
+export type ChatLogMetadata = {
+  participants: Participant[];
+  date: Date;
+};
 
 export type ChatLogFormat = [
   LineNumber,

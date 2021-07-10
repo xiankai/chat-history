@@ -1,4 +1,6 @@
-export const Plain = ({ logs }) => (
+import { ChatLogFormat } from 'datasources/base';
+
+export const Plain = ({ logs }: { logs: ChatLogFormat[] }) => (
   <div
     style={{
       whiteSpace: 'pre-line',
