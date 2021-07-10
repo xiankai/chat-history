@@ -23,7 +23,11 @@ export const Viewer = () => {
         select_item={select_recipient}
       />
       <DatePicker date={date} select_date={select_date} />
-      <ViewerComponent logs={logs} />
+      <ViewerComponent
+        logs={logs}
+        recipient={recipient}
+        date={date.toDateString()}
+      />
     </>
   );
 };

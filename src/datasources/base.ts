@@ -10,7 +10,7 @@ export type Term = string;
 export type Timestamp = Date;
 export type Message = string;
 export type Source = string;
-export type SourceMetadata = object;
+export type SourceMetadata = { sender: string };
 
 export type Participant = {
   identifier: string;

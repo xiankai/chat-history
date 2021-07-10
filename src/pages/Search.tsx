@@ -20,7 +20,11 @@ export const Search = () => {
     <>
       <h1>This is the search page</h1>
       <input value={search} onChange={handleChange} />
-      <ViewerComponent logs={logs} />
+      <ViewerComponent
+        logs={logs}
+        recipient="alejandro_1701@hotmail.com"
+        date="2008-11-06"
+      />
     </>
   );
 };
