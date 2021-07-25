@@ -45,10 +45,10 @@ export type SearchResult = [Recipient, DateBucketReference, LineNumber];
 
 export type Recipient = string;
 
-export default abstract class BaseDatasource {
-  abstract addToIndex(index: Index, terms: Term[]): void;
+export default interface BaseDatasource {
+  addToIndex(index: Index, terms: Term[]): void;
 
-  abstract addToStorage(
+  addToStorage(
     recipient: Recipient,
     line_number: LineNumber,
     timestamp: Timestamp,
@@ -57,18 +57,18 @@ export default abstract class BaseDatasource {
     source_metadata: SourceMetadata
   ): void;
 
-  abstract retrieveBucketListFromStorage(): Recipient[];
+  retrieveBucketListFromStorage(): Recipient[];
 
-  abstract retrieveBucketFromStorage(
+  retrieveBucketFromStorage(
     recipient: Recipient,
     date: DateBucketReference
   ): ChatLogFormat[];
 
-  abstract retrieveMessageFromStorage(
+  retrieveMessageFromStorage(
     recipient: Recipient,
     date: DateBucketReference,
     message_id: number
   ): ChatLogFormat;
 
-  abstract searchStorage(query: SearchQuery): ChatLogFormat[];
+  searchStorage(query: SearchQuery): ChatLogFormat[];
 }

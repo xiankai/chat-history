@@ -36,7 +36,7 @@ interface MemoryDatasourceStorage {
   logs: DateBuckets;
 }
 
-export default class MemoryDatasource extends BaseDatasource {
+export default class MemoryDatasource implements BaseDatasource {
   store: MemoryDatasourceStorage = {
     recipients: [],
     index: {},

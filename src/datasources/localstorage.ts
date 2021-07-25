@@ -16,7 +16,7 @@ import BaseDatasource, {
 } from './base';
 import { push_safe } from 'utils';
 
-export default class LocalStorageDatasource extends BaseDatasource {
+export default class LocalStorageDatasource implements BaseDatasource {
   private getStorageItem = (key: string, default_value = {}) => {
     return JSON.parse(window.localStorage.getItem(key)!) || default_value;
   };
