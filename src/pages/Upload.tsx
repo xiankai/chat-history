@@ -1,13 +1,18 @@
 import { FormEventHandler } from "react";
-import { datasource, formatter, tokenizer } from "../config";
+import {
+  datasource,
+  MSNFormatter,
+  MessengerFormatter,
+  tokenizer,
+} from "../config";
 
 export const Upload = () => {
-  const handleFiles = (files: FileList | null) => {
+  const handleMSNXML = (files: FileList | null) => {
     if (!files) return;
     Array.from(files).forEach((file) => {
       const fr = new FileReader();
       fr.onload = (e) => {
-        const { metadata, messages } = formatter.formatChatLog(
+        const { metadata, messages } = MSNFormatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
         const recipient = metadata.participants[1].identifier;
@@ -34,12 +39,37 @@ export const Upload = () => {
   };
 
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
-    handleFiles(e.currentTarget.files);
+    handleMSNXML(e.currentTarget.files);
+
+  const handleMessengerJSON = (files: FileList | null) => {
+    if (!files) return;
+    Array.from(files).forEach((file) => {
+      const fr = new FileReader();
+      fr.onload = (e) => {
+        const { metadata, messages } = MessengerFormatter.formatChatLog(
+          (e?.target?.result as string)?.trim()
+        );
+        console.log(metadata, messages);
+      };
+      fr.readAsText(file);
+    });
+  };
+
+  const handleMessengerUpload: FormEventHandler<HTMLInputElement> = (e) =>
+    handleMessengerJSON(e.currentTarget.files);
 
   return (
     <>
       <div>This is the chat upload page</div>
-      <input type="file" multiple onChange={handleChange} />
+      <label>
+        <span>MSN XML</span>
+        <input type="file" multiple onChange={handleChange} />
+      </label>
+
+      <label>
+        <span>Messenger JSON</span>
+        <input type="file" multiple onChange={handleMessengerUpload} />
+      </label>
     </>
   );
 };

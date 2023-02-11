@@ -5,14 +5,18 @@ import {
   LineNumber,
 } from "datasources/base";
 
-export default abstract class BaseFormatter {
-  abstract formatHeaders(lines: string[]): ChatLogMetadata;
+interface BaseFormatter {
+  formatHeaders?(lines: string[]): ChatLogMetadata;
 
-  abstract formatMessage(
+  formatMessage?(
     line_number: LineNumber,
     line: string,
     metadata?: any
   ): ChatLogFormat;
+}
 
+abstract class BaseFormatter {
   abstract formatChatLog(input: string): ChatLog;
 }
+
+export default BaseFormatter;
