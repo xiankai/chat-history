@@ -1,5 +1,5 @@
-import { FormEventHandler } from 'react';
-import { datasource, formatter, tokenizer } from '../config';
+import { FormEventHandler } from "react";
+import { datasource, formatter, tokenizer } from "../config";
 
 export const Upload = () => {
   const handleFiles = (files: FileList | null) => {

@@ -1,9 +1,9 @@
-import { FormEventHandler, useEffect, useState } from 'react';
-import { datasource, ViewerComponent } from '../config';
-import { ChatLogFormat } from '../datasources/base';
+import { FormEventHandler, useEffect, useState } from "react";
+import { datasource, ViewerComponent } from "../config";
+import { ChatLogFormat } from "../datasources/base";
 
 export const Search = () => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     setSearch(e.currentTarget.value);
 

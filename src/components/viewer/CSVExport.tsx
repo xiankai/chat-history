@@ -1,4 +1,4 @@
-import { ChatLogFormat } from 'datasources/base';
+import { ChatLogFormat } from "datasources/base";
 
 export const CSVExport = ({
   logs,
@@ -11,8 +11,8 @@ export const CSVExport = ({
 }) => (
   <div
     style={{
-      whiteSpace: 'pre-line',
-      textAlign: 'left',
+      whiteSpace: "pre-line",
+      textAlign: "left",
     }}
   >
     {logs
@@ -24,11 +24,11 @@ export const CSVExport = ({
           log[3],
           log[4].sender,
           recipient,
-          '2008-12-22',
+          "2008-12-22",
         ]
-          .map((l) => '`' + l + '`')
-          .join(',')
+          .map((l) => "`" + l + "`")
+          .join(",")
       )
-      .join('\n')}
+      .join("\n")}
   </div>
 );

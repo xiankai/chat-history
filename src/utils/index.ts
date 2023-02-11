@@ -1,6 +1,6 @@
-import has from 'lodash/has';
-import get from 'lodash/get';
-import set from 'lodash/set';
+import has from "lodash/has";
+import get from "lodash/get";
+import set from "lodash/set";
 
 // https://github.com/lodash/lodash/issues/1315
 export const push_safe = (

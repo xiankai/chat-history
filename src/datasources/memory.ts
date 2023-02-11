@@ -1,5 +1,5 @@
-import get from 'lodash/get';
-import { parseTimestampIntoDateBucket } from '../utils/date';
+import get from "lodash/get";
+import { parseTimestampIntoDateBucket } from "../utils/date";
 import BaseDatasource, {
   Term,
   DateBucketReference,
@@ -13,8 +13,8 @@ import BaseDatasource, {
   Index,
   SearchResult,
   Recipient,
-} from './base';
-import { push_safe } from 'utils';
+} from "./base";
+import { push_safe } from "utils";
 
 interface MemoryDatasourceIndex {
   [term: string]: SearchResult[];

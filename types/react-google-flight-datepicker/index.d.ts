@@ -1,1 +1,1 @@
-declare module 'react-google-flight-datepicker';
+declare module "react-google-flight-datepicker";

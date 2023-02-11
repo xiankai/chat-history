@@ -1,18 +1,18 @@
-import { useRoutes, A } from 'hookrouter';
-import { Home } from './pages/Home';
-import { About } from './pages/About';
-import { Upload } from './pages/Upload';
-import { Viewer } from './pages/Viewer';
-import { Search } from './pages/Search';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { StrictMode } from 'react';
+import { useRoutes, A } from "hookrouter";
+import { Home } from "./pages/Home";
+import { About } from "./pages/About";
+import { Upload } from "./pages/Upload";
+import { Viewer } from "./pages/Viewer";
+import { Search } from "./pages/Search";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { StrictMode } from "react";
 
 const routes = {
-  '/': () => <Home />,
-  '/about': () => <About />,
-  '/upload': () => <Upload />,
-  '/viewer': () => <Viewer />,
-  '/search': () => <Search />,
+  "/": () => <Home />,
+  "/about": () => <About />,
+  "/upload": () => <Upload />,
+  "/viewer": () => <Viewer />,
+  "/search": () => <Search />,
 };
 
 const App = () => {

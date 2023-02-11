@@ -13,7 +13,7 @@ export const List = <T extends string>(props: ListProps<T>) => {
         <li
           key={item}
           onClick={handle_click(item)}
-          className={item === props.selected_item ? 'text-red-500' : ''}
+          className={item === props.selected_item ? "text-red-500" : ""}
         >
           {item}
         </li>

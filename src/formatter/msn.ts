@@ -3,14 +3,14 @@ import {
   ChatLogFormat,
   ChatLogMetadata,
   LineNumber,
-} from 'datasources/base';
-import BaseFormatter from './base';
+} from "datasources/base";
+import BaseFormatter from "./base";
 
 class ParsingError extends Error {}
 
 export default class MSNFormatter extends BaseFormatter {
   source() {
-    return 'MSN';
+    return "MSN";
   }
 
   parse_session_line() {
@@ -92,7 +92,7 @@ export default class MSNFormatter extends BaseFormatter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, hour, minute, second, meridian, sender, message] = result!;
     const timestamp = new Date(metadata.date);
-    timestamp.setHours(+hour + (meridian === 'PM' ? 12 : 0));
+    timestamp.setHours(+hour + (meridian === "PM" ? 12 : 0));
     timestamp.setMinutes(+minute);
     timestamp.setSeconds(+second);
     return [
@@ -112,7 +112,7 @@ export default class MSNFormatter extends BaseFormatter {
     const messages: ChatLogFormat[] = [];
     sessions.forEach((session) => {
       line_counter += 6; // headers
-      const lines = session.split('\n');
+      const lines = session.split("\n");
       if (!metadata) {
         metadata = this.formatHeaders(lines.slice(1, 5));
       } else {
@@ -137,7 +137,7 @@ export default class MSNFormatter extends BaseFormatter {
         } catch (e) {
           // old entry, so we add to it
           if (e instanceof ParsingError) {
-            chat_log![2] += ' ' + line.slice(13);
+            chat_log![2] += " " + line.slice(13);
           } else {
             throw e;
           }
