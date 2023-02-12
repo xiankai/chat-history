@@ -1,18 +1,33 @@
-import { useState } from "react";
-import { datasource, ViewerComponent } from "../config";
+import { useEffect, useState } from "react";
+import { async_datasource, MessengerViewer } from "../config";
 import { List } from "../components/List";
 import { DatePicker } from "../components/DatePicker";
+import { ChatLogFormat } from "datasources/base";
 
 export const Viewer = () => {
-  const recipients = datasource.retrieveBucketListFromStorage();
-  const [recipient, select_recipient] = useState("alejandro_1701@hotmail.com");
+  const [recipient, select_recipient] = useState("Dean Cook");
+  const [recipients, set_recipients] = useState<string[]>([]);
 
-  const [date, select_date] = useState(new Date("2008-11-06"));
-  const logs = datasource.retrieveBucketFromStorage(recipient, {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate() + 1,
-  });
+  useEffect(() => {
+    const fetchRecipients = async () =>
+      await async_datasource.retrieveBucketListFromStorage();
+
+    fetchRecipients().then((recipients) => set_recipients(recipients));
+  }, []);
+
+  const [date, select_date] = useState(new Date("2019-08-28"));
+
+  const [logs, set_logs] = useState<ChatLogFormat[]>([]);
+  useEffect(() => {
+    const fetchLogs = async () =>
+      await async_datasource.retrieveBucketFromStorage(recipient, {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate() + 1,
+      });
+
+    fetchLogs().then((logs) => set_logs(logs));
+  }, [date, recipient]);
 
   return (
     <>
@@ -23,7 +38,7 @@ export const Viewer = () => {
         select_item={select_recipient}
       />
       <DatePicker date={date} select_date={select_date} />
-      <ViewerComponent
+      <MessengerViewer
         logs={logs}
         recipient={recipient}
         date={date.toDateString()}

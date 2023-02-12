@@ -1,9 +1,10 @@
 import { FormEventHandler } from "react";
 import {
-  datasource,
+  local_datasource,
   MSNFormatter,
   MessengerFormatter,
   tokenizer,
+  async_datasource,
 } from "../config";
 
 export const Upload = () => {
@@ -20,7 +21,7 @@ export const Upload = () => {
           const [line_number, timestamp, message, source, source_metadata] =
             chat_line;
           const terms = tokenizer.parseMessage(message);
-          const inserted_index = datasource.addToStorage(
+          const inserted_index = local_datasource.addToStorage(
             recipient,
             line_number,
             timestamp,
@@ -28,7 +29,7 @@ export const Upload = () => {
             source,
             source_metadata
           );
-          datasource.addToIndex(
+          local_datasource.addToIndex(
             { recipient, inserted_index, timestamp },
             terms
           );
@@ -49,7 +50,12 @@ export const Upload = () => {
         const { metadata, messages } = MessengerFormatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
-        console.log(metadata, messages);
+
+        async_datasource.bulkAddToStorage(
+          metadata.participants[0].identifier,
+          messages,
+          tokenizer.parseMessage
+        );
       };
       fr.readAsText(file);
     });

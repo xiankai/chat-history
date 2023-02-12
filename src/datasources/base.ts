@@ -30,6 +30,12 @@ export type ChatLogFormat = [
   SourceMetadata
 ];
 
+export const ChatLogFormatLineNumber = 0;
+export const ChatLogFormatTimestamp = 1;
+export const ChatLogFormatMessage = 2;
+export const ChatLogFormatSource = 3;
+export const ChatLogFormatSourceMetadata = 4;
+
 export type ChatLog = {
   metadata: ChatLogMetadata;
   messages: ChatLogFormat[];
@@ -71,4 +77,32 @@ export default interface BaseDatasource {
   ): ChatLogFormat;
 
   searchStorage(query: SearchQuery): ChatLogFormat[];
+}
+
+export interface AsyncBaseDatasource {
+  addToIndex(index: Index, terms: Term[]): void;
+
+  addToStorage(
+    recipient: Recipient,
+    line_number: LineNumber,
+    timestamp: Timestamp,
+    message: Message,
+    source: Source,
+    source_metadata: SourceMetadata
+  ): void;
+
+  retrieveBucketListFromStorage(): Promise<Recipient[]>;
+
+  retrieveBucketFromStorage(
+    recipient: Recipient,
+    date: DateBucketReference
+  ): Promise<ChatLogFormat[]>;
+
+  retrieveMessageFromStorage(
+    recipient: Recipient,
+    date: DateBucketReference,
+    message_id: number
+  ): Promise<ChatLogFormat>;
+
+  searchStorage(query: SearchQuery): Promise<ChatLogFormat[]>;
 }

@@ -23,6 +23,7 @@ export default class MessengerFormatter extends BaseFormatter {
         message.content || "",
         this.source(),
         {
+          sender_name: message.sender_name,
           photos: message.photos,
           reactions: message.reactions,
           videos: message.videos,
