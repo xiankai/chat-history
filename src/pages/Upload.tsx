@@ -3,7 +3,7 @@ import {
   local_datasource,
   MSNFormatter,
   MessengerFormatter,
-  tokenizer,
+  whitespace_tokenizer,
   async_datasource,
 } from "../config";
 
@@ -20,7 +20,7 @@ export const Upload = () => {
         messages.forEach((chat_line) => {
           const [line_number, timestamp, message, source, source_metadata] =
             chat_line;
-          const terms = tokenizer.parseMessage(message);
+          const terms = whitespace_tokenizer.parseMessage(message);
           const inserted_index = local_datasource.addToStorage(
             recipient,
             line_number,
@@ -54,7 +54,7 @@ export const Upload = () => {
         async_datasource.bulkAddToStorage(
           metadata.participants[0].identifier,
           messages,
-          tokenizer.parseMessage
+          whitespace_tokenizer.parseMessage
         );
       };
       fr.readAsText(file);
