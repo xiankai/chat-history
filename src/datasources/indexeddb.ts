@@ -109,7 +109,7 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
     date: DateBucketReference
   ): Promise<ChatLogFormat[]> {
     const date_bucket = await get(this.getLogKey(recipient, date), logStore);
-    return date_bucket;
+    return date_bucket || [];
   }
 
   async retrieveMessageFromStorage(
