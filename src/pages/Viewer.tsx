@@ -39,7 +39,7 @@ export const Viewer = () => {
       />
       <DatePicker date={date} select_date={select_date} />
       <MessengerViewer
-        logs={logs}
+        logs={logs.slice().reverse()}
         recipient={recipient}
         date={date.toDateString()}
       />
