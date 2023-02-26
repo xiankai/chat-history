@@ -6,7 +6,7 @@ import MSN from "./formatter/msn";
 import Messenger from "./formatter/messenger";
 // import { Plain } from "./components/viewer/Plain";
 import { CSVExport } from "./components/viewer/CSVExport";
-import { Messenger as MessengerViewer } from "./components/viewer/Messenger";
+import { Messenger as MessengerViewer } from "./components/viewer/Messenger/index";
 
 const local_datasource = new LocalStorageDatasource();
 const async_datasource = new IndexedDBDatasource();

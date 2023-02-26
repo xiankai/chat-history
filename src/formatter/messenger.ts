@@ -63,3 +63,5 @@ type Message = {
     actor: string;
   }[];
 };
+
+export type MessengerMetadata = Message;
