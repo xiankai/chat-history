@@ -10,4 +10,12 @@ export const DatePicker = ({
 }: {
   date: Date;
   select_date: (date: Date) => void;
-}) => <SingleDatePicker startDate={date} onChange={select_date} />;
+}) => {
+  const handleChange = (date?: Date) => {
+    if (!date) {
+      date = new Date();
+    }
+    select_date(date);
+  }
+  return <SingleDatePicker startDate={date} onChange={handleChange} />
+};
