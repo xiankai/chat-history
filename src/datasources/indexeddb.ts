@@ -123,7 +123,6 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
 
   async searchStorage(query: SearchQuery): Promise<ChatLogFormat[]> {
     const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
-    console.log(stored_indices);
     return await Promise.all(
       stored_indices.map(
         async ([recipient, date, inserted_index]) =>
