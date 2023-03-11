@@ -31,7 +31,7 @@ export const Messenger = ({
   const assetPrefixUrl = "/samples/facebook-johnathon52/";
   return (
     <div className="flex flex-col">
-      {logs.map((log) => {
+      {logs.map((log, i) => {
         const { sender_name, photos, reactions, videos } = log[
           ChatLogFormatSourceMetadata
         ] as MessengerMetadata;
@@ -49,6 +49,7 @@ export const Messenger = ({
           ));
         return (
           <MessageContainer
+            key={i}
             isRecipient={isRecipient}
             content={content}
             reactions={reactions}

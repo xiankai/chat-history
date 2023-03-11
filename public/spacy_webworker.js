@@ -23,7 +23,7 @@ async function loadPyodideAndPackages() {
 
     nlp = spacy.load("en_core_web_sm")
 
-    from pyodide import to_js
+    from pyodide.ffi import to_js
     def tokenize(sentence):
       doc = nlp(sentence)
       token = [{"text": token.text, "lemma": token.lemma_, "pos": token.pos_,
