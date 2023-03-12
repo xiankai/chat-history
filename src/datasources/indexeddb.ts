@@ -47,7 +47,8 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
   async bulkAddToStorage(
     recipient: Recipient,
     messages: ChatLogFormat[],
-    tokenizer?: (message: string) => string[]
+    tokenizer?: (message: string) => Promise<string[]>,
+    progress_tracker?: (callback: () => number) => void
   ) {
     set(recipient, messages[0][ChatLogFormatSource], recipientStore);
 
@@ -57,6 +58,12 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
         parseTimestampIntoDateBucket(message[ChatLogFormatTimestamp])
       )
     );
+
+    let progress = 0;
+    progress_tracker &&
+      progress_tracker(() => {
+        return progress;
+      });
 
     const insertedMessages: { [key: string]: [ChatLogFormat] } = {};
     const insertedTerms = [];
@@ -75,13 +82,18 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
         }
 
         if (tokenizer) {
-          const terms = tokenizer(message[ChatLogFormatMessage]);
+          const terms = await tokenizer(message[ChatLogFormatMessage]);
           insertedTerms.push(
             ...terms.map((term) => ({ term, recipient, date, index }))
           );
         }
+
+        if (progress_tracker) {
+          progress++;
+        }
       }
     }
+    progress_tracker && progress_tracker();
 
     setMany(Object.entries(insertedMessages), logStore);
     insertedTerms.forEach(({ term, recipient, date, index }, i) => {

@@ -1,4 +1,5 @@
-import { FormEventHandler, useState } from "react";
+import { createRef, FormEventHandler, useState } from "react";
+import { formatDurationFromSeconds } from "utils/string";
 import {
   local_datasource,
   MSNFormatter,
@@ -15,7 +16,7 @@ export const Upload = () => {
     tooltip: string;
   };
   const [tokenizer, set_tokenizer] =
-    useState<TokenizerConfig["data_key"]>("whitespace");
+    useState<TokenizerConfig["data_key"]>("spacy");
   const tokenizers: TokenizerConfig[] = [
     {
       data_key: "whitespace",
@@ -39,10 +40,20 @@ export const Upload = () => {
   };
 
   const [loading, set_loading] = useState(false);
+  const [duration, set_duration] = useState(0);
+  const [duration_tracker, set_duration_tracker] = useState<NodeJS.Timer>();
 
+  type ProgressBar = {
+    file_name: string;
+    progress: number;
+    progress_goal: number;
+  };
+  const [progress_bars, set_progress_bars] = useState<ProgressBar[]>([]);
+
+  const MSNXMLRef = createRef<HTMLInputElement>();
   const handleMSNXML = (files: FileList | null) => {
     if (!files) return;
-    set_loading(true);
+    handle_start();
     Array.from(files).forEach((file) => {
       const fr = new FileReader();
       fr.onload = (e) => {
@@ -67,7 +78,6 @@ export const Upload = () => {
             terms
           );
         });
-        set_loading(false);
       };
       fr.readAsText(file);
     });
@@ -76,22 +86,54 @@ export const Upload = () => {
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     handleMSNXML(e.currentTarget.files);
 
+  const handle_start = () => {
+    set_progress_bars([]);
+    set_duration(0);
+    set_loading(true);
+    set_duration_tracker(
+      setInterval(() => set_duration((duration) => duration + 1), 1000)
+    );
+  };
+
+  const MessengerJSONRef = createRef<HTMLInputElement>();
   const handleMessengerJSON = (files: FileList | null) => {
     if (!files) return;
-    set_loading(true);
-    Array.from(files).forEach((file) => {
+    handle_start();
+    Array.from(files).forEach((file, file_index) => {
       const fr = new FileReader();
-      fr.onload = (e) => {
+      fr.onload = async (e) => {
         const { metadata, messages } = MessengerFormatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
 
-        async_datasource.bulkAddToStorage(
+        set_progress_bars((progress_bars) => [
+          ...progress_bars,
+          {
+            file_index,
+            file_name: file.name,
+            progress: 0,
+            progress_goal: messages.length,
+          },
+        ]);
+
+        await async_datasource.bulkAddToStorage(
           metadata.participants[0].identifier,
           messages,
-          tokenizer_instance().parseMessage
+          tokenizer_instance().asyncParseMessage.bind(tokenizer_instance()),
+          (callback) => {
+            let progress_interval_id = setInterval(() => {
+              let progress = callback();
+              set_progress_bars((progress_bars) => {
+                const new_progress_bars = progress_bars.slice();
+                new_progress_bars[file_index].progress = progress;
+                return new_progress_bars;
+              });
+              if (progress === messages.length) {
+                clearInterval(progress_interval_id);
+              }
+            }, 1000);
+          }
         );
-        set_loading(false);
       };
       fr.readAsText(file);
     });
@@ -99,6 +141,16 @@ export const Upload = () => {
 
   const handleMessengerUpload: FormEventHandler<HTMLInputElement> = (e) =>
     handleMessengerJSON(e.currentTarget.files);
+
+  const handleUpload = () => {
+    if (MessengerJSONRef.current?.files?.length) {
+      handleMessengerJSON(MessengerJSONRef.current.files);
+    }
+
+    if (MSNXMLRef.current?.files?.length) {
+      handleMessengerJSON(MSNXMLRef.current.files);
+    }
+  };
 
   const Button = ({ data_key, label, tooltip }: TokenizerConfig) => (
     <button
@@ -122,12 +174,7 @@ export const Upload = () => {
 
       <label>
         <span className="label">MSN XML</span>
-        <input
-          type="file"
-          multiple
-          onChange={handleChange}
-          className="file-input"
-        />
+        <input type="file" multiple className="file-input" ref={MSNXMLRef} />
       </label>
 
       <label>
@@ -135,8 +182,8 @@ export const Upload = () => {
         <input
           type="file"
           multiple
-          onChange={handleMessengerUpload}
           className="file-input"
+          ref={MessengerJSONRef}
         />
       </label>
 
@@ -150,6 +197,31 @@ export const Upload = () => {
           <Button key={tokenizer.data_key} {...tokenizer} />
         ))}
       </div>
+
+      <div className="flex flex-col w-full border-opacity-50">
+        <div className="divider"></div>
+      </div>
+
+      <button className="btn btn-primary" onClick={handleUpload}>
+        Start
+      </button>
+
+      <span className="label">
+        Time elapsed {formatDurationFromSeconds(duration)}
+      </span>
+      {progress_bars.map((progress_bar) => (
+        <>
+          <span className="label">
+            Processed {progress_bar.progress.toLocaleString()} out of{" "}
+            {progress_bar.progress_goal.toLocaleString()} records for{" "}
+            {progress_bar.file_name}
+          </span>
+          <progress
+            value={progress_bar.progress}
+            max={progress_bar.progress_goal}
+          ></progress>
+        </>
+      ))}
     </>
   );
 };
