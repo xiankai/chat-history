@@ -29,6 +29,7 @@ const App = () => {
       <div className="navbar">
         {routeNav.map(({ path, label }) => (
           <ActiveLink
+            key={label}
             href={path}
             className="btn btn-ghost"
             exactActiveClass="btn-active"
@@ -37,7 +38,7 @@ const App = () => {
           </ActiveLink>
         ))}
       </div>
-      {routeResult || <NotFoundPage />}
+      <div className="px-8 py-8">{routeResult || <NotFoundPage />}</div>
     </div>
   );
 };

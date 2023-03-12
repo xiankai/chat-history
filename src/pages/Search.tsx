@@ -1,8 +1,23 @@
+import { List } from "components/List";
 import { FormEventHandler, useEffect, useState } from "react";
-import { async_datasource, CSVExport } from "../config";
-import { ChatLogFormat } from "../datasources/base";
+import { async_datasource, CSVExport, MessengerViewer } from "../config";
+import {
+  ChatLogFormat,
+  ChatLogFormatSource,
+  ChatLogFormatSourceMetadata,
+} from "../datasources/base";
 
 export const Search = () => {
+  const [recipient, select_recipient] = useState("Dean Cook");
+  const [recipients, set_recipients] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchRecipients = async () =>
+      await async_datasource.retrieveBucketListFromStorage();
+
+    fetchRecipients().then((recipients) => set_recipients(recipients));
+  }, []);
+
   const [search, setSearch] = useState("");
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     setSearch(e.currentTarget.value);
@@ -10,6 +25,7 @@ export const Search = () => {
   const [logs, setLogs] = useState<ChatLogFormat[]>([]);
   useEffect(() => {
     if (search.length < 2) {
+      setLogs([]);
       return;
     }
 
@@ -29,11 +45,24 @@ export const Search = () => {
         className="input input-bordered"
       />
 
-      <CSVExport
-        logs={logs}
-        recipient="alejandro_1701@hotmail.com"
-        date="2008-11-06"
-      />
+      <div className="grid grid-cols-4">
+        <div className="col-span-1">
+          <List
+            items={recipients}
+            selected_item={recipient}
+            select_item={select_recipient}
+          />
+        </div>
+        <div className="col-span-3">
+          {logs.map((log) =>
+            log[ChatLogFormatSource] === "Messenger" ? (
+              <MessengerViewer logs={[log]} recipient={recipient} />
+            ) : (
+              <CSVExport logs={[log]} recipient={recipient} />
+            )
+          )}
+        </div>
+      </div>
     </>
   );
 };

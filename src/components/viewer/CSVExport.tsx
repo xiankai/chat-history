@@ -3,10 +3,8 @@ import { ChatLogFormat } from "datasources/base";
 export const CSVExport = ({
   logs,
   recipient,
-  date,
 }: {
   recipient: string;
-  date: string;
   logs: ChatLogFormat[];
 }) => (
   <div

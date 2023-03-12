@@ -8,7 +8,7 @@ export const List = <T extends string>(props: ListProps<T>) => {
   const handle_click = (item: T) => () => props.select_item(item);
 
   return (
-    <ul>
+    <ul className="menu">
       {props.items.map((item) => (
         <li
           key={item}

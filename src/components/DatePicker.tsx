@@ -16,6 +16,6 @@ export const DatePicker = ({
       date = new Date();
     }
     select_date(date);
-  }
-  return <SingleDatePicker startDate={date} onChange={handleChange} />
+  };
+  return <SingleDatePicker startDate={date} onChange={handleChange} />;
 };

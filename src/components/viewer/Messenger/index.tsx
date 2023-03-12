@@ -2,32 +2,21 @@ import {
   ChatLogFormat,
   ChatLogFormatMessage,
   ChatLogFormatSourceMetadata,
+  ChatLogFormatTimestamp,
 } from "datasources/base";
 import { MessengerMetadata } from "formatter/messenger";
-import { useEffect } from "react";
 import { MessageContainer } from "./MessageContainer";
 import { PhotoMessage } from "./PhotoMessage";
 import { TextMessage } from "./TextMessage";
 import { VideoMessage } from "./VideoMessage";
-import { spacy_tokenizer } from "../../../config";
 
 export const Messenger = ({
   logs,
   recipient,
-  date,
 }: {
   recipient: string;
-  date: string;
   logs: ChatLogFormat[];
 }) => {
-  useEffect(() => {
-    logs.map((log) =>
-      spacy_tokenizer
-        .asyncParseMessage(log[ChatLogFormatMessage])
-        .then(console.log)
-    );
-  }, [logs]);
-
   const assetPrefixUrl = "/samples/facebook-johnathon52/";
   return (
     <div className="flex flex-col">
@@ -50,6 +39,7 @@ export const Messenger = ({
         return (
           <MessageContainer
             key={i}
+            date={new Date(log[ChatLogFormatTimestamp])}
             isRecipient={isRecipient}
             content={content}
             reactions={reactions}
