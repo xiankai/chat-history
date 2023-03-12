@@ -22,7 +22,13 @@ export const Search = () => {
   return (
     <>
       <h1>This is the search page</h1>
-      <input value={search} onChange={handleChange} />
+      <label className="label">Search Query (min length of 2)</label>
+      <input
+        value={search}
+        onChange={handleChange}
+        className="input input-bordered"
+      />
+
       <CSVExport
         logs={logs}
         recipient="alejandro_1701@hotmail.com"

@@ -1,1 +1,1 @@
-export const NotFoundPage = () => <span>404'</span>;
+export const NotFoundPage = () => <span>404</span>;
