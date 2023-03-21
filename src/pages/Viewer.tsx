@@ -43,12 +43,14 @@ export const Viewer = () => {
         </div>
         <div className="col-span-3">
           <DatePicker date={date} select_date={select_date} />
-          <DateContainer date={logs[logs.length - 1][ChatLogFormatTimestamp]}>
-            <MessengerViewer
-              logs={logs.slice().reverse()}
-              recipient={recipient}
-            />
-          </DateContainer>
+          {logs.length > 0 && (
+            <DateContainer date={logs[logs.length - 1][ChatLogFormatTimestamp]}>
+              <MessengerViewer
+                logs={logs.slice().reverse()}
+                recipient={recipient}
+              />
+            </DateContainer>
+          )}
         </div>
       </div>
     </>
