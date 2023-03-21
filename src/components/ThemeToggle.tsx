@@ -11,7 +11,10 @@ export const ThemeToggle = () => {
     <div>
       <label className="swap swap-rotate">
         {/* this hidden checkbox controls the state */}
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          defaultChecked={localStorage.getItem("theme") === "light"}
+        />
 
         {/* sun */}
         <svg
