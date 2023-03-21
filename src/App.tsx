@@ -6,6 +6,7 @@ import { Viewer } from "./pages/Viewer";
 import { Search } from "./pages/Search";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ThemeToggle } from "components/ThemeToggle";
+import { GoogleDrive } from "components/integrations/GoogleDrive";
 
 const routes = {
   "/": () => <Home />,
@@ -13,6 +14,7 @@ const routes = {
   "/upload": () => <Upload />,
   "/viewer": () => <Viewer />,
   "/search": () => <Search />,
+  "/googledrive": () => <GoogleDrive />,
 };
 
 const routeNav = [
@@ -21,6 +23,7 @@ const routeNav = [
   { path: "/upload", label: "Upload" },
   { path: "/viewer", label: "Viewer" },
   { path: "/search", label: "Search" },
+  { path: "/googledrive", label: "Google Drive" },
 ];
 
 const App = () => {
