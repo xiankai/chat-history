@@ -5,6 +5,7 @@ import { Upload } from "./pages/Upload";
 import { Viewer } from "./pages/Viewer";
 import { Search } from "./pages/Search";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ThemeToggle } from "components/ThemeToggle";
 
 const routes = {
   "/": () => <Home />,
@@ -37,6 +38,7 @@ const App = () => {
             {label}
           </ActiveLink>
         ))}
+        <ThemeToggle />
       </div>
       <div className="px-8 py-8">{routeResult || <NotFoundPage />}</div>
     </div>
