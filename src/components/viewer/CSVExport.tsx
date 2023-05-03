@@ -1,4 +1,11 @@
-import { ChatLogFormat } from "datasources/base";
+import {
+  ChatLogFormat,
+  ChatLogFormatLineNumber,
+  ChatLogFormatMessage,
+  ChatLogFormatSource,
+  ChatLogFormatSourceMetadata,
+  ChatLogFormatTimestamp,
+} from "datasources/base";
 
 export const CSVExport = ({
   logs,
@@ -16,11 +23,11 @@ export const CSVExport = ({
     {logs
       .map((log) =>
         [
-          log[0],
-          new Date(log[1]).getTime(),
-          log[2].replace('"', '\\"'),
-          log[3],
-          log[4].sender,
+          log[ChatLogFormatLineNumber],
+          new Date(log[ChatLogFormatTimestamp]).getTime(),
+          log[ChatLogFormatMessage].replace('"', '\\"'),
+          log[ChatLogFormatSource],
+          log[ChatLogFormatSourceMetadata].sender,
           recipient,
           "2008-12-22",
         ]

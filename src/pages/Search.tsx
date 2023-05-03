@@ -3,6 +3,7 @@ import { FormEventHandler, useEffect, useState } from "react";
 import { async_datasource, CSVExport, MessengerViewer } from "../config";
 import {
   ChatLogFormat,
+  ChatLogFormatLineNumber,
   ChatLogFormatSource,
   ChatLogFormatSourceMetadata,
 } from "../datasources/base";
@@ -56,9 +57,17 @@ export const Search = () => {
         <div className="col-span-3">
           {logs.map((log) =>
             log[ChatLogFormatSource] === "Messenger" ? (
-              <MessengerViewer logs={[log]} recipient={recipient} />
+              <MessengerViewer
+                key={log[ChatLogFormatLineNumber]}
+                logs={[log]}
+                recipient={recipient}
+              />
             ) : (
-              <CSVExport logs={[log]} recipient={recipient} />
+              <CSVExport
+                key={log[ChatLogFormatLineNumber]}
+                logs={[log]}
+                recipient={recipient}
+              />
             )
           )}
         </div>
