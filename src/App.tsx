@@ -4,6 +4,7 @@ import { About } from "./pages/About";
 import { Upload } from "./pages/Upload";
 import { Viewer } from "./pages/Viewer";
 import { Search } from "./pages/Search";
+import { Filesystem } from "./pages/Filesystem";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ThemeToggle } from "components/ThemeToggle";
 
@@ -13,6 +14,7 @@ const routes = {
   "/upload": () => <Upload />,
   "/viewer": () => <Viewer />,
   "/search": () => <Search />,
+  "/filesystem": () => <Filesystem />,
 };
 
 const routeNav = [
@@ -21,6 +23,7 @@ const routeNav = [
   { path: "/upload", label: "Upload" },
   { path: "/viewer", label: "Viewer" },
   { path: "/search", label: "Search" },
+  { path: "/filesystem", label: "Filesystem" },
 ];
 
 const App = () => {
