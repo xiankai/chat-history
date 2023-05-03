@@ -93,7 +93,6 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
         }
       }
     }
-    progress_tracker && progress_tracker();
 
     setMany(Object.entries(insertedMessages), logStore);
     insertedTerms.forEach(({ term, recipient, date, index }, i) => {

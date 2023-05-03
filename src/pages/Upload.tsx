@@ -1,4 +1,4 @@
-import { createRef, FormEventHandler, useState } from "react";
+import { createRef, FormEventHandler, Fragment, useState } from "react";
 import { formatDurationFromSeconds } from "utils/string";
 import {
   local_datasource,
@@ -41,7 +41,7 @@ export const Upload = () => {
 
   const [loading, set_loading] = useState(false);
   const [duration, set_duration] = useState(0);
-  const [duration_tracker, set_duration_tracker] = useState<NodeJS.Timer>();
+  const [duration_tracker, set_duration_tracker] = useState<number>();
 
   type ProgressBar = {
     file_name: string;
@@ -91,8 +91,13 @@ export const Upload = () => {
     set_duration(0);
     set_loading(true);
     set_duration_tracker(
-      setInterval(() => set_duration((duration) => duration + 1), 1000)
+      window.setInterval(() => set_duration((duration) => duration + 1), 1000)
     );
+  };
+
+  const handle_end = () => {
+    set_loading(false);
+    clearInterval(duration_tracker);
   };
 
   const MessengerJSONRef = createRef<HTMLInputElement>();
@@ -128,12 +133,14 @@ export const Upload = () => {
                 new_progress_bars[file_index].progress = progress;
                 return new_progress_bars;
               });
-              if (progress === messages.length) {
+              if (progress >= messages.length) {
                 clearInterval(progress_interval_id);
               }
             }, 1000);
           }
         );
+
+        handle_end();
       };
       fr.readAsText(file);
     });
@@ -209,8 +216,8 @@ export const Upload = () => {
       <span className="label">
         Time elapsed {formatDurationFromSeconds(duration)}
       </span>
-      {progress_bars.map((progress_bar) => (
-        <>
+      {progress_bars.map((progress_bar, index) => (
+        <Fragment key={index}>
           <span className="label">
             Processed {progress_bar.progress.toLocaleString()} out of{" "}
             {progress_bar.progress_goal.toLocaleString()} records for{" "}
@@ -220,7 +227,7 @@ export const Upload = () => {
             value={progress_bar.progress}
             max={progress_bar.progress_goal}
           ></progress>
-        </>
+        </Fragment>
       ))}
     </>
   );
