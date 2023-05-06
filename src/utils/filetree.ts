@@ -18,6 +18,21 @@ interface DirectoryNode extends TreeNode {
   children: TreeNode[];
 }
 
+export async function getDirectoryFilesRecursively(
+  directoryHandle: FileSystemDirectoryHandle
+): Promise<FileSystemFileHandle[]> {
+  const files: FileSystemFileHandle[] = [];
+  for await (const entry of directoryHandle.values()) {
+    if (entry.isDirectory) {
+      const subDirectoryFiles = await getDirectoryFilesRecursively(entry);
+      files.push(...subDirectoryFiles);
+    } else if (entry.name.endsWith(".json")) {
+      files.push(entry);
+    }
+  }
+  return files;
+}
+
 export async function getDirectoryTree(
   directoryHandle: FileSystemDirectoryHandle
 ): Promise<DirectoryNode> {

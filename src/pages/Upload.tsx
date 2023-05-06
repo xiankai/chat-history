@@ -6,12 +6,13 @@ import {
   MessengerFormatter,
   whitespace_tokenizer,
   spacy_tokenizer,
+  vector_tokenizer,
   async_datasource,
 } from "../config";
 
 export const Upload = () => {
   type TokenizerConfig = {
-    data_key: "whitespace" | "spacy";
+    data_key: "whitespace" | "spacy" | "vector";
     label: string;
     tooltip: string;
   };
@@ -26,12 +27,20 @@ export const Upload = () => {
     {
       data_key: "spacy",
       label: "spaCy",
-      tooltip: "Uses spaCy's pre-built NLP model to tokenizer messages.",
+      tooltip: "Uses spaCy's pre-built NLP model to tokenize messages.",
+    },
+    {
+      data_key: "vector",
+      label: "vector",
+      tooltip:
+        "Uses vector representations of text embeddings built from sentence transformers",
     },
   ];
 
   const tokenizer_instance = () => {
     switch (tokenizer) {
+      case "vector":
+        return vector_tokenizer;
       case "whitespace":
         return whitespace_tokenizer;
       case "spacy":

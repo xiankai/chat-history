@@ -108,4 +108,11 @@ export interface AsyncBaseDatasource {
 
   searchStorage(query: SearchQuery): Promise<ChatLogFormat[]>;
   searchStorageByDate(query: SearchQuery): Promise<SearchResultByDate>;
+
+  bulkAddToStorage(
+    recipient: Recipient,
+    messages: ChatLogFormat[],
+    tokenizer?: (message: string) => Promise<string[]>,
+    progress_tracker?: (callback: () => number) => void
+  ): Promise<void>;
 }
