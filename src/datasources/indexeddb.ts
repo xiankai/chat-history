@@ -1,6 +1,10 @@
 import { get, set, setMany, update, createStore, keys } from "idb-keyval";
 import groupBy from "lodash/groupBy";
-import { parseTimestampIntoDateBucket } from "utils/date";
+import union from "lodash/union";
+import {
+  parseDateBucketIntoDateString,
+  parseTimestampIntoDateBucket,
+} from "utils/date";
 import {
   AsyncBaseDatasource,
   DateBucketReference,
@@ -13,6 +17,7 @@ import {
   ChatLogFormatSource,
   ChatLogFormatTimestamp,
   ChatLogFormatMessage,
+  SearchResultByDate,
 } from "./base";
 
 const recipientStore = createStore("recipients", "keyval");
@@ -141,5 +146,32 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
       )
     );
     return messages.filter(Boolean);
+  }
+
+  async searchStorageByDate(query: SearchQuery): Promise<SearchResultByDate> {
+    const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
+
+    const messages_by_date: SearchResultByDate = {};
+    await Promise.all(
+      stored_indices.map(async ([recipient, date, inserted_index]) => {
+        const message = await this.retrieveMessageFromStorage(
+          recipient,
+          date,
+          inserted_index
+        );
+
+        if (!message) {
+          return Promise.resolve();
+        }
+
+        const date_string = parseDateBucketIntoDateString(date);
+        messages_by_date[date_string] = union(messages_by_date[date_string], [
+          message,
+        ]);
+
+        return Promise.resolve();
+      })
+    );
+    return messages_by_date;
   }
 }

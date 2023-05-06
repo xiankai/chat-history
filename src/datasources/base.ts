@@ -3,6 +3,7 @@ export type DateBucketReference = {
   month: number;
   day: number;
 };
+export type DateString = string;
 
 export type SearchQuery = string;
 export type LineNumber = number;
@@ -48,6 +49,7 @@ export type Index = {
 };
 
 export type SearchResult = [Recipient, DateBucketReference, LineNumber];
+export type SearchResultByDate = Record<DateString, ChatLogFormat[]>;
 
 export type Recipient = string;
 
@@ -105,4 +107,5 @@ export interface AsyncBaseDatasource {
   ): Promise<ChatLogFormat>;
 
   searchStorage(query: SearchQuery): Promise<ChatLogFormat[]>;
+  searchStorageByDate(query: SearchQuery): Promise<SearchResultByDate>;
 }

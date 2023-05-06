@@ -20,3 +20,13 @@ abstract class BaseFormatter {
 }
 
 export default BaseFormatter;
+
+export enum SupportedFormatter {
+  Messenger = "messenger",
+  MSN = "MSN",
+}
+
+export const supported_formatters: SupportedFormatter[] = [
+  SupportedFormatter.MSN,
+  SupportedFormatter.Messenger,
+];

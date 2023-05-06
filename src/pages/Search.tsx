@@ -5,8 +5,10 @@ import {
   ChatLogFormat,
   ChatLogFormatLineNumber,
   ChatLogFormatSource,
-  ChatLogFormatSourceMetadata,
+  ChatLogFormatTimestamp,
+  SearchResultByDate,
 } from "../datasources/base";
+import { DateContainer } from "components/viewer/Messenger/DateContainer";
 
 export const Search = () => {
   const [recipient, select_recipient] = useState("Dean Cook");
@@ -23,17 +25,16 @@ export const Search = () => {
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     setSearch(e.currentTarget.value);
 
-  const [logs, setLogs] = useState<ChatLogFormat[]>([]);
+  const [search_results, set_search_results] = useState<SearchResultByDate>({});
   useEffect(() => {
     if (search.length < 2) {
-      setLogs([]);
+      set_search_results({});
       return;
     }
 
-    const searchStorage = async () => {
-      return await async_datasource.searchStorage(search);
-    };
-    searchStorage().then((data) => setLogs(data));
+    async_datasource
+      .searchStorageByDate(search)
+      .then((data) => set_search_results(data));
   }, [search]);
 
   return (
@@ -55,21 +56,24 @@ export const Search = () => {
           />
         </div>
         <div className="col-span-3">
-          {logs.map((log) =>
-            log[ChatLogFormatSource] === "Messenger" ? (
-              <MessengerViewer
-                key={log[ChatLogFormatLineNumber]}
-                logs={[log]}
-                recipient={recipient}
-              />
-            ) : (
-              <CSVExport
-                key={log[ChatLogFormatLineNumber]}
-                logs={[log]}
-                recipient={recipient}
-              />
-            )
-          )}
+          {Object.values(search_results).map((logs) => (
+            <DateContainer date={logs[0][ChatLogFormatTimestamp]}>
+              {logs.map((log) => (
+                <MessengerViewer
+                  key={log[ChatLogFormatLineNumber]}
+                  logs={[log]}
+                  recipient={recipient}
+                />
+              ))}
+            </DateContainer>
+          ))}
+          {/* {logs.map((log) =>
+            <CSVExport
+              key={log[ChatLogFormatLineNumber]}
+              logs={[log]}
+              recipient={recipient}
+            />
+          )} */}
         </div>
       </div>
     </>
