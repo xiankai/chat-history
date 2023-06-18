@@ -28,15 +28,12 @@ export const MessageContainer = ({
         {content}
       </div>
       {reactions?.length && (
-        <div
-          className={`
-      ${isRecipient ? "text-left" : "text-right"}
-      -mt-3 h-3
-    `}
-        >
-          {reactions?.map((reaction) => (
-            <span className="">{fixMessengerExport(reaction.reaction)}</span>
-          ))}
+        <div className={"flex flex-row-reverse -mt-3 h-3"}>
+          <div className="w-5 h-5 rounded-full bg-white z-10 flex justify-center">
+            {reactions?.map((reaction) => (
+              <span>{fixMessengerExport(reaction.reaction)}</span>
+            ))}
+          </div>
         </div>
       )}
     </div>
