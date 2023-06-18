@@ -4,9 +4,13 @@ import { RecipientList } from "../components/RecipientList";
 import { DatePicker } from "../components/DatePicker";
 import { ChatLogFormat, ChatLogFormatTimestamp } from "datasources/base";
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
+import { useQueryParams } from "raviger";
 
 export const Viewer = () => {
-  const [recipient, select_recipient] = useState("Dean Cook");
+  const [search_result] = useQueryParams();
+  const [recipient, select_recipient] = useState(
+    search_result.recipient || "Dean Cook"
+  );
   const [recipients, set_recipients] = useState<string[]>([]);
 
   useEffect(() => {
@@ -16,7 +20,9 @@ export const Viewer = () => {
     fetchRecipients().then((recipients) => set_recipients(recipients));
   }, []);
 
-  const [date, select_date] = useState(new Date("2019-08-28"));
+  const [date, select_date] = useState(
+    new Date(search_result.date || "2019-08-28")
+  );
 
   const [logs, set_logs] = useState<ChatLogFormat[]>([]);
   useEffect(() => {
@@ -27,7 +33,18 @@ export const Viewer = () => {
         day: date.getDate() + 1,
       });
 
-    fetchLogs().then((logs) => set_logs(logs));
+    fetchLogs().then((logs) => {
+      set_logs(logs);
+      if (search_result.line) {
+        const line_number = parseInt(search_result.line);
+        const line = document.querySelector(
+          `[data-line-number="${line_number}"]`
+        );
+        if (line) {
+          line.scrollIntoView();
+        }
+      }
+    });
   }, [date, recipient]);
 
   return (

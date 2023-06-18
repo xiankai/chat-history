@@ -1,4 +1,4 @@
-import { List } from "components/List";
+import { RecipientList } from "components/RecipientList";
 import { FormEventHandler, useEffect, useState } from "react";
 import { async_datasource, CSVExport, MessengerViewer } from "../config";
 import {
@@ -9,6 +9,8 @@ import {
   SearchResultByDate,
 } from "../datasources/base";
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
+import { SearchResultWrapper } from "components/viewer/Messenger/SearchResultWrapper";
+import { parseTimestampIntoDateBucket } from "utils/date";
 
 export const Search = () => {
   const [recipient, select_recipient] = useState("Dean Cook");
@@ -33,23 +35,25 @@ export const Search = () => {
     }
 
     async_datasource
-      .searchStorageByDate(search)
+      .searchStorageByDate(search, recipient)
       .then((data) => set_search_results(data));
-  }, [search]);
+  }, [search, recipient]);
 
   return (
     <>
       <h1>This is the search page</h1>
-      <label className="label">Search Query (min length of 2)</label>
-      <input
-        value={search}
-        onChange={handleChange}
-        className="input input-bordered"
-      />
 
       <div className="grid grid-cols-4">
         <div className="col-span-1">
-          <List
+          <div className="ml-10 mb-0">
+            <label className="label">Search Query (min length of 2)</label>
+            <input
+              value={search}
+              onChange={handleChange}
+              className="input input-bordered w-[80%]"
+            />
+          </div>
+          <RecipientList
             items={recipients}
             selected_item={recipient}
             select_item={select_recipient}
@@ -59,11 +63,19 @@ export const Search = () => {
           {Object.values(search_results).map((logs) => (
             <DateContainer date={logs[0][ChatLogFormatTimestamp]}>
               {logs.map((log) => (
-                <MessengerViewer
-                  key={log[ChatLogFormatLineNumber]}
-                  logs={[log]}
+                <SearchResultWrapper
                   recipient={recipient}
-                />
+                  dateBucketReference={parseTimestampIntoDateBucket(
+                    log[ChatLogFormatTimestamp]
+                  )}
+                  lineNumber={log[ChatLogFormatLineNumber]}
+                >
+                  <MessengerViewer
+                    key={log[ChatLogFormatLineNumber]}
+                    logs={[log]}
+                    recipient={recipient}
+                  />
+                </SearchResultWrapper>
               ))}
             </DateContainer>
           ))}

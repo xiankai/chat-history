@@ -1,5 +1,6 @@
 import {
   ChatLogFormat,
+  ChatLogFormatLineNumber,
   ChatLogFormatMessage,
   ChatLogFormatSourceMetadata,
   ChatLogFormatTimestamp,
@@ -39,6 +40,7 @@ export const Messenger = ({
         return (
           <MessageContainer
             key={i}
+            line={log[ChatLogFormatLineNumber]}
             date={new Date(log[ChatLogFormatTimestamp])}
             isRecipient={isRecipient}
             content={content}

@@ -148,12 +148,19 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
     return messages.filter(Boolean);
   }
 
-  async searchStorageByDate(query: SearchQuery): Promise<SearchResultByDate> {
+  async searchStorageByDate(
+    query: SearchQuery,
+    recipient: Recipient
+  ): Promise<SearchResultByDate> {
     const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
 
     const messages_by_date: SearchResultByDate = {};
     await Promise.all(
-      stored_indices.map(async ([recipient, date, inserted_index]) => {
+      stored_indices.map(async ([searched_recipient, date, inserted_index]) => {
+        if (recipient && searched_recipient !== recipient) {
+          return Promise.resolve();
+        }
+
         const message = await this.retrieveMessageFromStorage(
           recipient,
           date,

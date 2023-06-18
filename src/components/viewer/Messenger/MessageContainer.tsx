@@ -3,11 +3,13 @@ import { ReactNode } from "react";
 import { fixMessengerExport } from "utils/string";
 
 export const MessageContainer = ({
+  line,
   isRecipient,
   content,
   reactions,
   date,
 }: {
+  line: number;
   isRecipient: boolean;
   content: ReactNode;
   reactions: MessengerMetadata["reactions"];
@@ -16,10 +18,11 @@ export const MessageContainer = ({
   return (
     <div
       className={`
-    ${isRecipient ? "self-start" : "self-end"}
-    max-w-3/5
-    mt-1 mb-1 ml-7 mr-5
-  `}
+        ${isRecipient ? "self-start" : "self-end"}
+        max-w-3/5
+        mt-1 mb-1 ml-7 mr-5
+      `}
+      data-line-number={line}
     >
       <div className="tooltip tooltip-left" data-tip={date.toLocaleString()}>
         {content}

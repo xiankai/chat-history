@@ -107,7 +107,10 @@ export interface AsyncBaseDatasource {
   ): Promise<ChatLogFormat>;
 
   searchStorage(query: SearchQuery): Promise<ChatLogFormat[]>;
-  searchStorageByDate(query: SearchQuery): Promise<SearchResultByDate>;
+  searchStorageByDate(
+    query: SearchQuery,
+    recipient: Recipient
+  ): Promise<SearchResultByDate>;
 
   bulkAddToStorage(
     recipient: Recipient,
