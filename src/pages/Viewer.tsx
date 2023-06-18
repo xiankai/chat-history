@@ -5,6 +5,7 @@ import { DatePicker } from "../components/DatePicker";
 import { ChatLogFormat, ChatLogFormatTimestamp } from "datasources/base";
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
 import { useQueryParams } from "raviger";
+import { parseDateIntoDateBucket } from "utils/date";
 
 export const Viewer = () => {
   const [search_result] = useQueryParams();
@@ -27,11 +28,10 @@ export const Viewer = () => {
   const [logs, set_logs] = useState<ChatLogFormat[]>([]);
   useEffect(() => {
     const fetchLogs = async () =>
-      await async_datasource.retrieveBucketFromStorage(recipient, {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: date.getDate() + 1,
-      });
+      await async_datasource.retrieveBucketFromStorage(
+        recipient,
+        parseDateIntoDateBucket(date)
+      );
 
     fetchLogs().then((logs) => {
       set_logs(logs);

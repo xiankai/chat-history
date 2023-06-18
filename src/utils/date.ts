@@ -15,6 +15,14 @@ export const parseTimestampIntoDateBucket = (
   };
 };
 
+export const parseDateIntoDateBucket = (date: Date): DateBucketReference => {
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+  };
+};
+
 export const parseDateBucketIntoDateString = (
   date_bucket: DateBucketReference
 ): DateString => {
