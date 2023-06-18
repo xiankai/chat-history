@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { async_datasource, MessengerViewer } from "../config";
-import { List } from "../components/List";
+import { RecipientList } from "../components/RecipientList";
 import { DatePicker } from "../components/DatePicker";
 import { ChatLogFormat, ChatLogFormatTimestamp } from "datasources/base";
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
@@ -35,7 +35,7 @@ export const Viewer = () => {
       <h1>This is the chat history page</h1>
       <div className="grid grid-cols-4">
         <div className="col-span-1">
-          <List
+          <RecipientList
             items={recipients}
             selected_item={recipient}
             select_item={select_recipient}
