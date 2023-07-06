@@ -25,3 +25,6 @@ yarn-error.log*
 # artifacts
 public/*.whl
 public/samples
+
+# vite build
+dist
