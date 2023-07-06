@@ -13,7 +13,7 @@ import { Messenger as MessengerViewer } from "./components/viewer/Messenger/inde
 
 const local_datasource = new LocalStorageDatasource();
 const async_datasource = new IndexedDBDatasource();
-const vector_datasource = new VectorDatasource();
+// const vector_datasource = new VectorDatasource();
 const txtai_datasource = new TxtaiDatasource();
 const whitespace_tokenizer = new WhitespaceTokenizer();
 const vector_tokenizer = new VectorTokenizer();
@@ -24,7 +24,7 @@ const MessengerFormatter = new Messenger();
 export {
   local_datasource,
   async_datasource,
-  vector_datasource,
+  // vector_datasource,
   txtai_datasource,
   whitespace_tokenizer,
   spacy_tokenizer,
