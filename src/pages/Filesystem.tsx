@@ -1,9 +1,10 @@
 import { entries, get, set, update, createStore, getMany } from "idb-keyval";
 import { DirectoryViewer } from "components/DirectoryViewer";
 import { SupportedFormatter, supported_formatters } from "formatter/base";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { getDirectoryFilesRecursively } from "utils/filetree";
-import { MessengerFormatter, vector_datasource } from "config";
+import { MessengerFormatter, txtai_datasource } from "config";
+import { formatDurationFromSeconds } from "utils/string";
 
 type Data = [SupportedFormatter, FileSystemDirectoryHandle];
 
@@ -70,23 +71,9 @@ export const Filesystem = () => {
             },
           ]);
 
-          await vector_datasource.bulkAddToStorage(
+          await txtai_datasource.bulkAddToStorage(
             metadata.participants[0].identifier,
-            messages,
-            () => Promise.resolve([""]),
-            (callback) => {
-              let progress_interval_id = setInterval(() => {
-                let progress = callback();
-                set_progress_bars((progress_bars) => {
-                  const new_progress_bars = progress_bars.slice();
-                  new_progress_bars[file_index].progress = progress;
-                  return new_progress_bars;
-                });
-                if (progress >= messages.length) {
-                  clearInterval(progress_interval_id);
-                }
-              }, 1000);
-            }
+            messages
           );
 
           handle_end();
@@ -141,9 +128,25 @@ export const Filesystem = () => {
       </div>
       <div>
         <button className="btn btn-secondary" onClick={handleStartEmbedding}>
-          Start embeding the folder
+          Start embedding the folder
         </button>
       </div>
+      <span className="label">
+        Time elapsed {formatDurationFromSeconds(duration)}
+      </span>
+      {progress_bars.map((progress_bar, index) => (
+        <Fragment key={index}>
+          <span className="label">
+            Processed {progress_bar.progress.toLocaleString()} out of{" "}
+            {progress_bar.progress_goal.toLocaleString()} records for{" "}
+            {progress_bar.file_name}
+          </span>
+          <progress
+            value={progress_bar.progress}
+            max={progress_bar.progress_goal}
+          ></progress>
+        </Fragment>
+      ))}
     </>
   );
 };

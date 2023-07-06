@@ -105,3 +105,47 @@ export function asciiTreeToHtml(asciiTree: string): string {
 
   return wrappedHtmlTree;
 }
+
+function renderNode(node: TreeNode, depth: number = 0): string {
+  if (node.type === "file") {
+    const fileNode = node as FileNode;
+    return `<li class="file" style="margin-left: ${20 * depth}px">${
+      fileNode.name
+    }</li>`;
+  } else {
+    const directoryNode = node as DirectoryNode;
+    let html = `<li class="directory" style="margin-left: ${20 * depth}px">${
+      directoryNode.name
+    }</li><ul>`;
+
+    const directories = directoryNode.children.filter(
+      (child) => child.type === "directory"
+    );
+    const files = directoryNode.children.filter(
+      (child) => child.type === "file"
+    );
+
+    const directoryElements = directories
+      .map((child) => renderNode(child, depth + 1))
+      .join("");
+    html += directoryElements;
+
+    const fileElements = files
+      .slice(0, 5)
+      .map((child) => renderNode(child, depth + 1))
+      .join("");
+    html += fileElements;
+
+    if (files.length > 5) {
+      html += `<li class="more-items" style="margin-left: ${
+        20 * (depth + 1)
+      }px"><strong>${files.length - 5} more items</strong></li>`;
+    }
+    html += `</ul>`;
+    return html;
+  }
+}
+
+export function renderTree(root: DirectoryNode): string {
+  return `<ul>${renderNode(root)}</ul>`;
+}

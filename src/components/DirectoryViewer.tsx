@@ -1,7 +1,7 @@
 import { SupportedFormatter } from "formatter/base";
 import { useEffect, useState } from "react";
 import {
-  asciiTreeToHtml,
+  renderTree,
   generateAsciiTree,
   getDirectoryTree,
 } from "utils/filetree";
@@ -19,8 +19,9 @@ export const DirectoryViewer = ({
 
   useEffect(() => {
     getDirectoryTree(directoryHandle).then((directoryTree) => {
-      const asciiTree = generateAsciiTree(directoryTree);
-      const html = asciiTreeToHtml(asciiTree);
+      // const asciiTree = generateAsciiTree(directoryTree);
+      // const html = asciiToHtml(asciiTree);
+      const html = renderTree(directoryTree);
       set_ascii_tree(html);
     });
   }, [directoryHandle]);
