@@ -7,24 +7,25 @@ import { Search } from "./pages/Search";
 import { Filesystem } from "./pages/Filesystem";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ThemeToggle } from "components/ThemeToggle";
+import { normalizePath } from "utils/url";
 
-const routes = {
-  "/": () => <Home />,
-  "/about": () => <About />,
-  "/upload": () => <Upload />,
-  "/viewer": () => <Viewer />,
-  "/search": () => <Search />,
-  "/filesystem": () => <Filesystem />,
-};
+const routeConfig = [
+  { path: "/", label: "Home", component: () => <Home /> },
+  { path: "/about", label: "About", component: () => <About /> },
+  { path: "/upload", label: "Upload", component: () => <Upload /> },
+  { path: "/viewer", label: "Viewer", component: () => <Viewer /> },
+  { path: "/search", label: "Search", component: () => <Search /> },
+  { path: "/filesystem", label: "Filesystem", component: () => <Filesystem /> },
+].map((route) => ({
+  ...route,
+  path: normalizePath(route.path),
+}));
 
-const routeNav = [
-  { path: "/", label: "Home" },
-  { path: "/about", label: "About" },
-  { path: "/upload", label: "Upload" },
-  { path: "/viewer", label: "Viewer" },
-  { path: "/search", label: "Search" },
-  { path: "/filesystem", label: "Filesystem" },
-];
+const routes = Object.fromEntries(
+  routeConfig.map(({ path, component }) => [path, component])
+);
+
+const routeNav = routeConfig.map(({ path, label }) => ({ path, label }));
 
 const App = () => {
   const routeResult = useRoutes(routes);

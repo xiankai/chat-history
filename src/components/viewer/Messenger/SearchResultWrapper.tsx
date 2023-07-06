@@ -2,6 +2,7 @@ import { DateBucketReference } from "datasources/base";
 import { navigate } from "raviger";
 import { ReactNode } from "react";
 import { parseDateBucketIntoDateString } from "utils/date";
+import { normalizePath } from "utils/url";
 
 export const SearchResultWrapper = ({
   recipient,
@@ -15,7 +16,7 @@ export const SearchResultWrapper = ({
   children: ReactNode;
 }) => {
   const jumpToSearchResult = () => {
-    navigate("/viewer", {
+    navigate(normalizePath("/viewer"), {
       query: {
         recipient,
         date: parseDateBucketIntoDateString(dateBucketReference),
