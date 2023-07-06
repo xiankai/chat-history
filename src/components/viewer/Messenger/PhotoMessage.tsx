@@ -11,23 +11,23 @@ export const PhotoMessage = ({
     return (
       <div>
         <a href={assetPrefixUrl + photos[0].uri}>
-            <img
-              src={assetPrefixUrl + photos[0].uri}
-              className={`
+          <img
+            src={assetPrefixUrl + photos[0].uri}
+            className={`
                 max-h-48
                 rounded
                 m-1
               `}
-            />
-          </a>
+          />
+        </a>
       </div>
     )
   }
 
   return (
     <div>
-      {photos?.map((photo) => (
-        <span>
+      {photos?.map((photo, i) => (
+        <span key={i}>
           <a href={assetPrefixUrl + photo.uri}>
             <img
               src={assetPrefixUrl + photo.uri}
