@@ -1,4 +1,10 @@
-export const normalizePath = (path: string): string =>
-  // remove trailing slash from BASE_URL first as our path starts with a leading slash
-  // Next remove trailing slash from final path as raviger doesn't like trailing slashes
-  (import.meta.env.BASE_URL.replace(/\/$/, "") + path).replace(/\/$/, "");
+import { BASE_URL } from "../constants";
+
+export const normalizePath = (path: string): string => {
+  // If the base url is /, then we don't need to do anything.
+  if (BASE_URL === "/") return path;
+  // If the path is /, then we need to remove the trailing slash from the base url.
+  if (path === "/") return BASE_URL.replace(/\/$/, "");
+  // Otherwise, we need to add the base url to the path.
+  return `${BASE_URL.replace(/\/$/, "")}${path}`;
+};
