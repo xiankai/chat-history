@@ -19,6 +19,7 @@ import {
   parseTimestampIntoDateBucket,
 } from "utils/date";
 import { uniqueId } from "lodash";
+import { VITE_TXTAI_URL } from "../constants";
 
 interface TxtaiDocument {
   id: string;
@@ -29,7 +30,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
   base_url = "";
   embeddings;
 
-  constructor(base_url = import.meta.env.VITE_TXTAI_URL) {
+  constructor(base_url = VITE_TXTAI_URL) {
     this.base_url = base_url;
 
     this.embeddings = {

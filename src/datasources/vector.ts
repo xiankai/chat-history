@@ -14,18 +14,19 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 // import { Chroma } from "langchain/vectorstores/chroma";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { Document } from "langchain/document";
+import { VITE_OPENAI_API_KEY } from "../constants";
 
 export default class VectorDatasource implements AsyncBaseDatasource {
   db;
   constructor() {
     this.db = new MemoryVectorStore(
       new OpenAIEmbeddings({
-        openAIApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+        openAIApiKey: VITE_OPENAI_API_KEY,
       })
     );
     // this.db = new Chroma(
     //   new OpenAIEmbeddings({
-    //     openAIApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    //     openAIApiKey: VITE_OPENAI_API_KEY,
     //   }),
     //   {
     //     collectionName: "langchain",
