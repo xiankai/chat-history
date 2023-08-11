@@ -1,63 +1,11 @@
-import { createRef, FormEventHandler, Fragment, useState } from "react";
-import { formatDurationFromSeconds } from "utils/string";
-import {
-  local_datasource,
-  MSNFormatter,
-  MessengerFormatter,
-  whitespace_tokenizer,
-  spacy_tokenizer,
-  vector_tokenizer,
-  async_datasource,
-} from "../config";
+import { createRef, FormEventHandler, useState } from "react";
+import ConfigStore from "config_store";
+import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
+import { SupportedFormatter } from "formatter/base";
 
 export const Upload = () => {
-  type TokenizerConfig = {
-    data_key: "whitespace" | "spacy" | "vector";
-    label: string;
-    tooltip: string;
-  };
-  const [tokenizer, set_tokenizer] =
-    useState<TokenizerConfig["data_key"]>("spacy");
-  const tokenizers: TokenizerConfig[] = [
-    {
-      data_key: "whitespace",
-      label: "Whitespace",
-      tooltip: "Uses a simple whitespace-based tokenizer.",
-    },
-    {
-      data_key: "spacy",
-      label: "spaCy",
-      tooltip: "Uses spaCy's pre-built NLP model to tokenize messages.",
-    },
-    {
-      data_key: "vector",
-      label: "vector",
-      tooltip:
-        "Uses vector representations of text embeddings built from sentence transformers",
-    },
-  ];
-
-  const tokenizer_instance = () => {
-    switch (tokenizer) {
-      case "vector":
-        return vector_tokenizer;
-      case "whitespace":
-        return whitespace_tokenizer;
-      case "spacy":
-        return spacy_tokenizer;
-    }
-  };
-
   const [loading, set_loading] = useState(false);
-  const [duration, set_duration] = useState(0);
-  const [duration_tracker, set_duration_tracker] = useState<number>();
-
-  type ProgressBar = {
-    file_name: string;
-    progress: number;
-    progress_goal: number;
-  };
-  const [progress_bars, set_progress_bars] = useState<ProgressBar[]>([]);
+  const [progress_bars, set_progress_bars] = useState<ProgressBarProps[]>([]);
 
   const MSNXMLRef = createRef<HTMLInputElement>();
   const handleMSNXML = (files: FileList | null) => {
@@ -66,27 +14,30 @@ export const Upload = () => {
     Array.from(files).forEach((file) => {
       const fr = new FileReader();
       fr.onload = (e) => {
-        const { metadata, messages } = MSNFormatter.formatChatLog(
+        const { metadata, messages } = ConfigStore.msn_formatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
         const recipient = metadata.participants[1].identifier;
-        messages.forEach((chat_line) => {
-          const [line_number, timestamp, message, source, source_metadata] =
-            chat_line;
-          const terms = tokenizer_instance().parseMessage(message);
-          const inserted_index = local_datasource.addToStorage(
+
+        const progress_tracker_callback =
+          ConfigStore.datasource_instance.bulkAddToStorage(
             recipient,
-            line_number,
-            timestamp,
-            message,
-            source,
-            source_metadata
+            SupportedFormatter.MSN,
+            messages,
+            ConfigStore.tokenizer_instance.asyncParseMessage.bind(
+              ConfigStore.tokenizer_instance
+            )
           );
-          local_datasource.addToIndex(
-            { recipient, inserted_index, timestamp },
-            terms
-          );
-        });
+
+        set_progress_bars((progress_bars) => [
+          ...progress_bars,
+          {
+            index: file.name,
+            text_template: `Processed {current} out of {total} records for ${file.name}`,
+            progress_tracker_callback,
+            total_progress: messages.length,
+          },
+        ]);
       };
       fr.readAsText(file);
     });
@@ -97,57 +48,44 @@ export const Upload = () => {
 
   const handle_start = () => {
     set_progress_bars([]);
-    set_duration(0);
     set_loading(true);
-    set_duration_tracker(
-      window.setInterval(() => set_duration((duration) => duration + 1), 1000)
-    );
   };
 
   const handle_end = () => {
     set_loading(false);
-    clearInterval(duration_tracker);
   };
 
   const MessengerJSONRef = createRef<HTMLInputElement>();
   const handleMessengerJSON = (files: FileList | null) => {
     if (!files) return;
     handle_start();
-    Array.from(files).forEach((file, file_index) => {
+    Array.from(files).forEach((file) => {
       const fr = new FileReader();
       fr.onload = async (e) => {
-        const { metadata, messages } = MessengerFormatter.formatChatLog(
-          (e?.target?.result as string)?.trim()
-        );
+        const { metadata, messages } =
+          ConfigStore.messenger_formatter.formatChatLog(
+            (e?.target?.result as string)?.trim()
+          );
+
+        const progress_tracker_callback =
+          ConfigStore.datasource_instance.bulkAddToStorage(
+            metadata.participants[0].identifier,
+            SupportedFormatter.Messenger,
+            messages,
+            ConfigStore.tokenizer_instance.asyncParseMessage.bind(
+              ConfigStore.tokenizer_instance
+            )
+          );
 
         set_progress_bars((progress_bars) => [
           ...progress_bars,
           {
-            file_index,
-            file_name: file.name,
-            progress: 0,
-            progress_goal: messages.length,
+            index: file.name,
+            text_template: `Processed {current} out of {total} records for ${file.name}`,
+            progress_tracker_callback,
+            total_progress: messages.length,
           },
         ]);
-
-        await async_datasource.bulkAddToStorage(
-          metadata.participants[0].identifier,
-          messages,
-          tokenizer_instance().asyncParseMessage.bind(tokenizer_instance()),
-          (callback) => {
-            let progress_interval_id = setInterval(() => {
-              let progress = callback();
-              set_progress_bars((progress_bars) => {
-                const new_progress_bars = progress_bars.slice();
-                new_progress_bars[file_index].progress = progress;
-                return new_progress_bars;
-              });
-              if (progress >= messages.length) {
-                clearInterval(progress_interval_id);
-              }
-            }, 1000);
-          }
-        );
 
         handle_end();
       };
@@ -167,18 +105,6 @@ export const Upload = () => {
       handleMessengerJSON(MSNXMLRef.current.files);
     }
   };
-
-  const Button = ({ data_key, label, tooltip }: TokenizerConfig) => (
-    <button
-      className={`btn ${tokenizer === data_key ? "btn-active" : ""} ${
-        loading ? "btn-disabled" : ""
-      } tooltip`}
-      onClick={() => set_tokenizer(data_key)}
-      data-tip={tooltip}
-    >
-      {label}
-    </button>
-  );
 
   return (
     <>
@@ -207,13 +133,6 @@ export const Upload = () => {
         <div className="divider">Settings</div>
       </div>
 
-      <label className="label">Tokenizer to use</label>
-      <div className="btn-group">
-        {tokenizers.map((tokenizer) => (
-          <Button key={tokenizer.data_key} {...tokenizer} />
-        ))}
-      </div>
-
       <div className="flex flex-col w-full border-opacity-50">
         <div className="divider"></div>
       </div>
@@ -222,21 +141,8 @@ export const Upload = () => {
         Start
       </button>
 
-      <span className="label">
-        Time elapsed {formatDurationFromSeconds(duration)}
-      </span>
-      {progress_bars.map((progress_bar, index) => (
-        <Fragment key={index}>
-          <span className="label">
-            Processed {progress_bar.progress.toLocaleString()} out of{" "}
-            {progress_bar.progress_goal.toLocaleString()} records for{" "}
-            {progress_bar.file_name}
-          </span>
-          <progress
-            value={progress_bar.progress}
-            max={progress_bar.progress_goal}
-          ></progress>
-        </Fragment>
+      {progress_bars.map((progress_bar) => (
+        <ProgressBar key={progress_bar.index} {...progress_bar} />
       ))}
     </>
   );

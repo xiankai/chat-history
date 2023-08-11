@@ -53,6 +53,8 @@ export type SearchResultByDate = Record<DateString, ChatLogFormat[]>;
 
 export type Recipient = string;
 
+export type ProgressTrackerCallback = () => number | string;
+
 export default interface BaseDatasource {
   addToIndex(index: Index, terms: Term[]): void;
 
@@ -97,25 +99,40 @@ export interface AsyncBaseDatasource {
 
   retrieveBucketFromStorage(
     recipient: Recipient,
+    source: Source,
     date: DateBucketReference
   ): Promise<ChatLogFormat[]>;
 
+  retrieveFirstBucketFromStorage(
+    recipient: Recipient,
+    source: Source
+  ): Promise<ChatLogFormat[]>;
+
+  retrieveLastBucketFromStorage(
+    recipient: Recipient,
+    source: Source
+  ): Promise<ChatLogFormat[]>;
+
+  deleteBucketFromStorage(recipient: Recipient, source: Source): Promise<void>;
+
   retrieveMessageFromStorage(
     recipient: Recipient,
+    source: Source,
     date: DateBucketReference,
     message_id: number
   ): Promise<ChatLogFormat>;
 
-  searchStorage(query: SearchQuery): Promise<ChatLogFormat[]>;
+  searchStorage(query: SearchQuery, source: Source): Promise<ChatLogFormat[]>;
   searchStorageByDate(
     query: SearchQuery,
+    source: Source,
     recipient: Recipient
   ): Promise<SearchResultByDate>;
 
   bulkAddToStorage(
     recipient: Recipient,
+    source: Source,
     messages: ChatLogFormat[],
-    tokenizer?: (message: string) => Promise<string[]>,
-    progress_tracker?: (callback: () => number) => void
-  ): Promise<void>;
+    tokenizer?: (message: string) => Promise<string[]>
+  ): ProgressTrackerCallback;
 }

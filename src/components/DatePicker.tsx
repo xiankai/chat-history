@@ -8,7 +8,7 @@ export const DatePicker = ({
   date,
   select_date,
 }: {
-  date: Date;
+  date?: Date;
   select_date: (date: Date) => void;
 }) => {
   const handleChange = (date?: Date) => {

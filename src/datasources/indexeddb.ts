@@ -18,6 +18,7 @@ import {
   ChatLogFormatTimestamp,
   ChatLogFormatMessage,
   SearchResultByDate,
+  Source,
 } from "./base";
 
 const recipientStore = createStore("recipients", "keyval");
@@ -25,6 +26,9 @@ const termStore = createStore("terms", "keyval");
 const logStore = createStore("logs", "keyval");
 
 export default class IndexedDBDatasource implements AsyncBaseDatasource {
+  deleteBucketFromStorage(recipient: string, source: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   addToIndex(index: Index, terms: string[]): void {
     throw new Error("Method not implemented.");
   }
@@ -44,60 +48,64 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
   };
   private getLogKey = (
     recipient: Recipient,
+    source: Source,
     date: DateBucketReference
   ): string => {
     return [recipient, this.getDateKey(date)].join("-");
   };
 
-  async bulkAddToStorage(
+  bulkAddToStorage(
     recipient: Recipient,
+    source: Source,
     messages: ChatLogFormat[],
-    tokenizer?: (message: string) => Promise<string[]>,
-    progress_tracker?: (callback: () => number) => void
+    tokenizer?: (message: string) => Promise<string[]>
   ) {
     set(recipient, messages[0][ChatLogFormatSource], recipientStore);
 
     const grouped_messages = groupBy(messages, (message) =>
       this.getLogKey(
         recipient,
+        source,
         parseTimestampIntoDateBucket(message[ChatLogFormatTimestamp])
       )
     );
 
     let progress = 0;
-    progress_tracker &&
-      progress_tracker(() => {
-        return progress;
-      });
+    const progress_tracker_callback = () => progress;
 
     const insertedMessages: { [key: string]: [ChatLogFormat] } = {};
-    const insertedTerms = [];
-    for (const key in grouped_messages) {
-      const messages = grouped_messages[key];
-      for (const index in messages) {
-        const message = messages[index];
-        const date = parseTimestampIntoDateBucket(
-          message[ChatLogFormatTimestamp]
-        );
-
-        if (insertedMessages[key]) {
-          insertedMessages[key].push(message);
-        } else {
-          insertedMessages[key] = [message];
-        }
-
-        if (tokenizer) {
-          const terms = await tokenizer(message[ChatLogFormatMessage]);
-          insertedTerms.push(
-            ...terms.map((term) => ({ term, recipient, date, index }))
+    const insertedTerms: {
+      term: string;
+      recipient: Recipient;
+      date: DateBucketReference;
+      index: string;
+    }[] = [];
+    (async () => {
+      for (const key in grouped_messages) {
+        const messages = grouped_messages[key];
+        for (const index in messages) {
+          const message = messages[index];
+          const date = parseTimestampIntoDateBucket(
+            message[ChatLogFormatTimestamp]
           );
-        }
 
-        if (progress_tracker) {
+          if (insertedMessages[key]) {
+            insertedMessages[key].push(message);
+          } else {
+            insertedMessages[key] = [message];
+          }
+
+          if (tokenizer) {
+            const terms = await tokenizer(message[ChatLogFormatMessage]);
+            insertedTerms.push(
+              ...terms.map((term) => ({ term, recipient, date, index }))
+            );
+          }
+
           progress++;
         }
       }
-    }
+    })();
 
     setMany(Object.entries(insertedMessages), logStore);
     insertedTerms.forEach(({ term, recipient, date, index }, i) => {
@@ -114,6 +122,8 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
         termStore
       );
     });
+
+    return progress_tracker_callback;
   }
 
   async retrieveBucketListFromStorage(): Promise<Recipient[]> {
@@ -122,27 +132,43 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
 
   async retrieveBucketFromStorage(
     recipient: Recipient,
+    source: Source,
     date: DateBucketReference
   ): Promise<ChatLogFormat[]> {
-    const date_bucket = await get(this.getLogKey(recipient, date), logStore);
+    const date_bucket = await get(
+      this.getLogKey(recipient, source, date),
+      logStore
+    );
     return date_bucket || [];
   }
 
   async retrieveMessageFromStorage(
     recipient: Recipient,
+    source: Source,
     date: DateBucketReference,
     inserted_index: number
   ): Promise<ChatLogFormat> {
-    const date_bucket = await get(this.getLogKey(recipient, date), logStore);
+    const date_bucket = await get(
+      this.getLogKey(recipient, source, date),
+      logStore
+    );
     return date_bucket[inserted_index];
   }
 
-  async searchStorage(query: SearchQuery): Promise<ChatLogFormat[]> {
+  async searchStorage(
+    query: SearchQuery,
+    source: Source
+  ): Promise<ChatLogFormat[]> {
     const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
     const messages = await Promise.all(
       stored_indices.map(
         async ([recipient, date, inserted_index]) =>
-          await this.retrieveMessageFromStorage(recipient, date, inserted_index)
+          await this.retrieveMessageFromStorage(
+            recipient,
+            source,
+            date,
+            inserted_index
+          )
       )
     );
     return messages.filter(Boolean);
@@ -150,6 +176,7 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
 
   async searchStorageByDate(
     query: SearchQuery,
+    source: Source,
     recipient: Recipient
   ): Promise<SearchResultByDate> {
     const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
@@ -163,6 +190,7 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
 
         const message = await this.retrieveMessageFromStorage(
           recipient,
+          source,
           date,
           inserted_index
         );

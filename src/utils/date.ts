@@ -15,6 +15,11 @@ export const parseTimestampIntoDateBucket = (
   };
 };
 
+export const parseTimestampIntoDateString = (
+  timestamp: Timestamp
+): DateString =>
+  parseDateBucketIntoDateString(parseTimestampIntoDateBucket(timestamp));
+
 export const parseDateIntoDateBucket = (date: Date): DateBucketReference => {
   return {
     year: date.getFullYear(),
@@ -27,4 +32,8 @@ export const parseDateBucketIntoDateString = (
   date_bucket: DateBucketReference
 ): DateString => {
   return [date_bucket.year, date_bucket.month, date_bucket.day].join("-");
+};
+
+export const isValidDate = (date: Date): boolean => {
+  return !isNaN(date.getTime());
 };

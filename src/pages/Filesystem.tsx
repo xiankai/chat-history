@@ -3,8 +3,9 @@ import { DirectoryViewer } from "components/DirectoryViewer";
 import { SupportedFormatter, supported_formatters } from "formatter/base";
 import { Fragment, useEffect, useState } from "react";
 import { getDirectoryFilesRecursively } from "utils/filetree";
-import { MessengerFormatter, txtai_datasource } from "config";
 import { formatDurationFromSeconds } from "utils/string";
+import ConfigStore from "config_store";
+import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 
 type Data = [SupportedFormatter, FileSystemDirectoryHandle];
 
@@ -12,6 +13,7 @@ const filesystemStore = createStore("filesystems", "keyval");
 
 export const Filesystem = () => {
   const [filesystems, set_filesystems] = useState<Data[]>([]);
+  const [formatter, set_formatter] = useState<SupportedFormatter>();
 
   // useEffect(() => {
   //   const getFilesystems = async () => {
@@ -24,6 +26,7 @@ export const Filesystem = () => {
   // }, []);
 
   const handleSelectFolder = (formatter: SupportedFormatter) => () => {
+    set_formatter(formatter);
     const getDirectory = async () => {
       return await window.showDirectoryPicker({ id: formatter });
     };
@@ -36,67 +39,55 @@ export const Filesystem = () => {
     });
   };
 
-  const [loading, set_loading] = useState(false);
-  const [duration, set_duration] = useState(0);
   const [duration_tracker, set_duration_tracker] = useState<number>();
 
-  type ProgressBar = {
-    file_name: string;
-    progress: number;
-    progress_goal: number;
-  };
-  const [progress_bars, set_progress_bars] = useState<ProgressBar[]>([]);
+  const [progress_bars, set_progress_bars] = useState<ProgressBarProps[]>([]);
 
   const handleStartEmbedding = async () => {
+    if (!formatter) {
+      alert("Formatter not selected");
+      return;
+    }
     handle_start();
-    await Promise.all(
+    Promise.all(
       filesystems.map(async ([, directoryHandle]) => {
         const fileHandles = await getDirectoryFilesRecursively(directoryHandle);
 
-        fileHandles.forEach(async (fileHandle, file_index) => {
-          const file = await fileHandle.getFile();
-          const contents = await file.text();
+        return Promise.all(
+          fileHandles.map(async (fileHandle) => {
+            const file = await fileHandle.getFile();
+            const contents = await file.text();
 
-          const { metadata, messages } = MessengerFormatter.formatChatLog(
-            contents.trim()
-          );
+            const { metadata, messages } = ConfigStore.get_formatter_instance(
+              formatter
+            ).formatChatLog(contents.trim());
 
-          set_progress_bars((progress_bars) => [
-            ...progress_bars,
-            {
-              file_index,
-              file_name: file.name,
-              progress: 0,
-              progress_goal: messages.length,
-            },
-          ]);
+            const progress_tracker_callback =
+              ConfigStore.datasource_instance.bulkAddToStorage(
+                metadata.participants[0].identifier,
+                formatter,
+                messages
+              );
 
-          await txtai_datasource.bulkAddToStorage(
-            metadata.participants[0].identifier,
-            messages
-          );
-
-          handle_end();
+            return {
+              index: file.name,
+              text_template: `Processed {current} out of {total} records for ${file.name}`,
+              progress_tracker_callback,
+              total_progress: messages.length,
+            };
+          })
+        ).then((progress_bars) => {
+          set_progress_bars(progress_bars);
         });
-
-        return Promise.resolve();
       })
-    );
+    ).finally(handle_end);
   };
 
   const handle_start = () => {
     set_progress_bars([]);
-    set_duration(0);
-    set_loading(true);
-    set_duration_tracker(
-      window.setInterval(() => set_duration((duration) => duration + 1), 1000)
-    );
   };
 
-  const handle_end = () => {
-    set_loading(false);
-    clearInterval(duration_tracker);
-  };
+  const handle_end = () => {};
 
   return (
     <>
@@ -131,21 +122,9 @@ export const Filesystem = () => {
           Start embedding the folder
         </button>
       </div>
-      <span className="label">
-        Time elapsed {formatDurationFromSeconds(duration)}
-      </span>
-      {progress_bars.map((progress_bar, index) => (
-        <Fragment key={index}>
-          <span className="label">
-            Processed {progress_bar.progress.toLocaleString()} out of{" "}
-            {progress_bar.progress_goal.toLocaleString()} records for{" "}
-            {progress_bar.file_name}
-          </span>
-          <progress
-            value={progress_bar.progress}
-            max={progress_bar.progress_goal}
-          ></progress>
-        </Fragment>
+
+      {progress_bars.map((progress_bar) => (
+        <ProgressBar key={progress_bar.index} {...progress_bar} />
       ))}
     </>
   );

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate-client": "openapi -i http://127.0.0.1:8000/openapi.json -o ./src/datasources/txtai/generated",
+    "generate-client": "openapi -i http://localhost:8000/openapi.json -o ./src/datasources/txtai/generated --useOptions",
     "test": "jest",
     "dev": "vite",
     "build": "tsc && vite build",
@@ -17,6 +17,8 @@
     "js-cookie": "^3.0.5",
     "langchain": "^0.0.68",
     "lodash": "^4.17.21",
+    "mobx": "^6.9.1",
+    "mobx-react-lite": "^4.0.3",
     "pyodide": "^0.22.1",
     "raviger": "^4.1.2",
     "react": "^18.2.0",

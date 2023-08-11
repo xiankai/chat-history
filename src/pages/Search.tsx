@@ -1,24 +1,28 @@
 import { RecipientList } from "components/RecipientList";
 import { FormEventHandler, useEffect, useState } from "react";
-import { async_datasource, CSVExport, MessengerViewer } from "../config";
+import ConfigStore from "config_store";
+import { SourceViewer } from "components/SourceViewer";
 import {
-  ChatLogFormat,
   ChatLogFormatLineNumber,
-  ChatLogFormatSource,
   ChatLogFormatTimestamp,
   SearchResultByDate,
 } from "../datasources/base";
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
 import { SearchResultWrapper } from "components/viewer/Messenger/SearchResultWrapper";
 import { parseTimestampIntoDateBucket } from "utils/date";
+import { SupportedFormatter } from "formatter/base";
+import { SourceList } from "components/SourceList";
 
 export const Search = () => {
-  const [recipient, select_recipient] = useState("Dean Cook");
+  const [source, set_source] = useState<SupportedFormatter>(
+    SupportedFormatter.Messenger
+  );
+  const [recipient, select_recipient] = useState("");
   const [recipients, set_recipients] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchRecipients = async () =>
-      await async_datasource.retrieveBucketListFromStorage();
+      await ConfigStore.datasource_instance.retrieveBucketListFromStorage();
 
     fetchRecipients().then((recipients) => set_recipients(recipients));
   }, []);
@@ -34,8 +38,8 @@ export const Search = () => {
       return;
     }
 
-    async_datasource
-      .searchStorageByDate(search, recipient)
+    ConfigStore.datasource_instance
+      .searchStorageByDate(search, source, recipient)
       .then((data) => set_search_results(data));
   }, [search, recipient]);
 
@@ -53,6 +57,7 @@ export const Search = () => {
               className="input input-bordered w-[80%]"
             />
           </div>
+          <SourceList selected_item={source} select_item={set_source} />
           <RecipientList
             items={recipients}
             selected_item={recipient}
@@ -70,22 +75,11 @@ export const Search = () => {
                   )}
                   lineNumber={log[ChatLogFormatLineNumber]}
                 >
-                  <MessengerViewer
-                    key={log[ChatLogFormatLineNumber]}
-                    logs={[log]}
-                    recipient={recipient}
-                  />
+                  <SourceViewer logs={[log]} recipient={recipient} />
                 </SearchResultWrapper>
               ))}
             </DateContainer>
           ))}
-          {/* {logs.map((log) =>
-            <CSVExport
-              key={log[ChatLogFormatLineNumber]}
-              logs={[log]}
-              recipient={recipient}
-            />
-          )} */}
         </div>
       </div>
     </>

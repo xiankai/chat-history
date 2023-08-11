@@ -4,6 +4,7 @@ export type RecipientListProps<T> = {
   selected_item: T;
   items: T[];
   select_item: (item: T) => void;
+  delete_item?: (item: T) => void;
 };
 
 export const RecipientList = <T extends string>(
@@ -27,6 +28,15 @@ export const RecipientList = <T extends string>(
             <div>
               <strong>{item}</strong>
             </div>
+            {props.delete_item && (
+              <span
+                className="btn btn-link btn-sm text-white"
+                onClick={() => props.delete_item(item)}
+              >
+                <i className="icon icon-cross"></i>
+                Delete
+              </span>
+            )}
           </a>
         </li>
       ))}

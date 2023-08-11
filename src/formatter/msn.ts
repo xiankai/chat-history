@@ -4,13 +4,13 @@ import {
   ChatLogMetadata,
   LineNumber,
 } from "datasources/base";
-import BaseFormatter from "./base";
+import BaseFormatter, { SupportedFormatter } from "./base";
 
 class ParsingError extends Error {}
 
 export default class MSNFormatter extends BaseFormatter {
   source() {
-    return "MSN";
+    return SupportedFormatter.MSN;
   }
 
   parse_session_line() {

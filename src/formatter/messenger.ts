@@ -1,9 +1,9 @@
 import { ChatLog } from "datasources/base";
-import BaseFormatter from "./base";
+import BaseFormatter, { SupportedFormatter } from "./base";
 
 export default class MessengerFormatter extends BaseFormatter {
   source() {
-    return "Messenger";
+    return SupportedFormatter.Messenger;
   }
 
   formatChatLog(input: string): ChatLog {
