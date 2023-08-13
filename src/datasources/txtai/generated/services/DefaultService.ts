@@ -15,20 +15,10 @@ export class DefaultService {
      * @returns string Successful Response
      * @throws ApiError
      */
-    public static recipientsRecipientsGet({
-        firebaseToken,
-    }: {
-        firebaseToken?: string,
-    }): CancelablePromise<Array<string>> {
+    public static recipientsRecipientsGet(): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/recipients',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
-            errors: {
-                422: `Validation Error`,
-            },
         });
     }
 
@@ -47,7 +37,6 @@ export class DefaultService {
         order = 'desc',
         recipient = '',
         source = '',
-        firebaseToken,
     }: {
         q: string,
         fromDate?: string,
@@ -58,14 +47,10 @@ export class DefaultService {
         order?: string,
         recipient?: string,
         source?: string,
-        firebaseToken?: string,
     }): CancelablePromise<Array<DocumentDataFull>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/search',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             query: {
                 'q': q,
                 'from_date': fromDate,
@@ -92,19 +77,14 @@ export class DefaultService {
         date,
         recipient,
         source,
-        firebaseToken,
     }: {
         date: string,
         recipient: string,
         source: string,
-        firebaseToken?: string,
     }): CancelablePromise<Array<DocumentDataFull>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/day',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             query: {
                 'date': date,
                 'recipient': recipient,
@@ -124,18 +104,13 @@ export class DefaultService {
     public static dayFirstDayGet({
         recipient,
         source,
-        firebaseToken,
     }: {
         recipient: string,
         source: string,
-        firebaseToken?: string,
     }): CancelablePromise<Array<DocumentDataFull>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/first_day',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             query: {
                 'recipient': recipient,
                 'source': source,
@@ -154,18 +129,13 @@ export class DefaultService {
     public static dayLastDayGet({
         recipient,
         source,
-        firebaseToken,
     }: {
         recipient: string,
         source: string,
-        firebaseToken?: string,
     }): CancelablePromise<Array<DocumentDataFull>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/last_day',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             query: {
                 'recipient': recipient,
                 'source': source,
@@ -183,17 +153,12 @@ export class DefaultService {
      */
     public static indexIndexPost({
         requestBody,
-        firebaseToken,
     }: {
         requestBody: Documents,
-        firebaseToken?: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/index',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -210,18 +175,13 @@ export class DefaultService {
     public static deleteDeleteDelete({
         recipient,
         source,
-        firebaseToken,
     }: {
         recipient: string,
         source: string,
-        firebaseToken?: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/delete',
-            cookies: {
-                'firebase_token': firebaseToken,
-            },
             query: {
                 'recipient': recipient,
                 'source': source,

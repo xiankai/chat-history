@@ -109,7 +109,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
           source_metadata: message[ChatLogFormatSourceMetadata],
         })),
       },
-      firebaseToken: Cookies.get("firebase_token"),
     })
       .then(() => (finished = messages.length))
       .catch((err) => (finished = JSON.stringify(err)));
@@ -117,9 +116,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
   }
 
   async retrieveBucketListFromStorage(): Promise<Recipient[]> {
-    return DefaultService.recipientsRecipientsGet({
-      firebaseToken: Cookies.get("firebase_token"),
-    });
+    return DefaultService.recipientsRecipientsGet();
   }
 
   async retrieveBucketFromStorage(
@@ -131,7 +128,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
       date: parseDateBucketIntoDateString(date),
       recipient,
       source,
-      firebaseToken: Cookies.get("firebase_token"),
     });
 
     return response.map(this.formatTxtaiResponse);
@@ -144,7 +140,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     const response = await DefaultService.dayFirstDayGet({
       recipient,
       source,
-      firebaseToken: Cookies.get("firebase_token"),
     });
 
     return response.map(this.formatTxtaiResponse);
@@ -157,7 +152,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     const response = await DefaultService.dayLastDayGet({
       recipient,
       source,
-      firebaseToken: Cookies.get("firebase_token"),
     });
 
     return response.map(this.formatTxtaiResponse);
@@ -170,7 +164,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     const response = await DefaultService.deleteDeleteDelete({
       recipient,
       source,
-      firebaseToken: Cookies.get("firebase_token"),
     });
   }
 
@@ -186,7 +179,6 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
   async searchStorage(query: SearchQuery): Promise<ChatLogFormat[]> {
     const response = await DefaultService.searchSearchGet({
       q: query,
-      firebaseToken: Cookies.get("firebase_token"),
     });
 
     return response.map(this.formatTxtaiResponse);

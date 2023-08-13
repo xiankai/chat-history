@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import Cookies from 'js-cookie';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
@@ -26,6 +27,8 @@ export const OpenAPI: OpenAPIConfig = {
     TOKEN: undefined,
     USERNAME: undefined,
     PASSWORD: undefined,
-    HEADERS: undefined,
+    HEADERS: {
+        'Authorization': `Bearer ${Cookies.get("firebase_token")}`,
+    },
     ENCODE_PATH: undefined,
 };
