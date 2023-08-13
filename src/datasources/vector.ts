@@ -33,6 +33,9 @@ export default class VectorDatasource implements AsyncBaseDatasource {
     //   }
     // );
   }
+  deleteBucketFromStorage(recipient: string, source: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 
   addToIndex(index: Index, terms: string[]): void {
     throw new Error("Method not implemented.");
@@ -50,12 +53,26 @@ export default class VectorDatasource implements AsyncBaseDatasource {
   }
   retrieveBucketFromStorage(
     recipient: string,
+    source: string,
     date: DateBucketReference
+  ): Promise<ChatLogFormat[]> {
+    throw new Error("Method not implemented.");
+  }
+  retrieveFirstBucketFromStorage(
+    recipient: string,
+    source: string
+  ): Promise<ChatLogFormat[]> {
+    throw new Error("Method not implemented.");
+  }
+  retrieveLastBucketFromStorage(
+    recipient: string,
+    source: string
   ): Promise<ChatLogFormat[]> {
     throw new Error("Method not implemented.");
   }
   retrieveMessageFromStorage(
     recipient: string,
+    source: string,
     date: DateBucketReference,
     message_id: number
   ): Promise<ChatLogFormat> {
@@ -77,11 +94,11 @@ export default class VectorDatasource implements AsyncBaseDatasource {
     }
   }
 
-  async bulkAddToStorage(
+  bulkAddToStorage(
     recipient: Recipient,
+    source: string,
     messages: ChatLogFormat[],
-    tokenizer?: (message: string) => Promise<string[]>, // replace with embedding function
-    progress_tracker?: (callback: () => number) => void
+    tokenizer?: (message: string) => Promise<string[]> // replace with embedding function
   ) {
     const docs: Document[] = messages.map((message) => ({
       pageContent: message[ChatLogFormatMessage],
@@ -91,8 +108,8 @@ export default class VectorDatasource implements AsyncBaseDatasource {
       },
     }));
 
-    await this.db.addDocuments(docs);
-    console.log(this.db.memoryVectors);
-    this.db.similaritySearch("haha").then(console.log);
+    let progress = 0;
+    this.db.addDocuments(docs).then(() => (progress = messages.length));
+    return () => progress;
   }
 }

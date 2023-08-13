@@ -142,6 +142,22 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
     return date_bucket || [];
   }
 
+  async retrieveFirstBucketFromStorage(
+    recipient: string,
+    source: string
+  ): Promise<ChatLogFormat[]> {
+    // Cannot implement as all recipient/source/dates are stored as a single key with no ordering capability
+    throw new Error("Method not implemented.");
+  }
+
+  async retrieveLastBucketFromStorage(
+    recipient: string,
+    source: string
+  ): Promise<ChatLogFormat[]> {
+    // Cannot implement as all recipient/source/dates are stored as a single key with no ordering capability
+    throw new Error("Method not implemented.");
+  }
+
   async retrieveMessageFromStorage(
     recipient: Recipient,
     source: Source,

@@ -11,6 +11,7 @@ export const RecipientList = <T extends string>(
   props: RecipientListProps<T>
 ) => {
   const handle_click = (item: T) => () => props.select_item(item);
+  const handle_delete = props.delete_item ? props.delete_item : () => {};
 
   return (
     <ul className="menu">
@@ -31,7 +32,7 @@ export const RecipientList = <T extends string>(
             {props.delete_item && (
               <span
                 className="btn btn-link btn-sm text-white"
-                onClick={() => props.delete_item(item)}
+                onClick={() => handle_delete(item)}
               >
                 <i className="icon icon-cross"></i>
                 Delete
