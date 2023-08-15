@@ -24,11 +24,9 @@ export const OpenAPI: OpenAPIConfig = {
     VERSION: '0.1.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',
-    TOKEN: undefined,
+    TOKEN: () => new Promise(resolve => resolve(Cookies.get('firebase_token') || '')),
     USERNAME: undefined,
     PASSWORD: undefined,
-    HEADERS: {
-        'Authorization': `Bearer ${Cookies.get("firebase_token")}`,
-    },
+    HEADERS: undefined,
     ENCODE_PATH: undefined,
 };
