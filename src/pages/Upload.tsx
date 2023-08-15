@@ -1,5 +1,5 @@
 import { createRef, FormEventHandler, useState } from "react";
-import ConfigStore from "config_store";
+import ConfigStore from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 import { SupportedFormatter } from "formatter/base";
 

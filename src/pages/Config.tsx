@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import ConfigStore, { ConfigFormat } from "config_store";
+import ConfigStore, { ConfigFormat } from "stores/config_store";
 
 const Button = ({
   data_key,

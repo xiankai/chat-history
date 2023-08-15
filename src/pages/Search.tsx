@@ -1,6 +1,6 @@
 import { RecipientList } from "components/RecipientList";
 import { FormEventHandler, useEffect, useState } from "react";
-import ConfigStore from "config_store";
+import ConfigStore from "stores/config_store";
 import { SourceViewer } from "components/SourceViewer";
 import {
   ChatLogFormatLineNumber,

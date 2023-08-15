@@ -1,4 +1,4 @@
-import ConfigStore from "config_store";
+import ConfigStore from "stores/config_store";
 import { SupportedFormatter } from "formatter/base";
 
 export type SourceListProps = {

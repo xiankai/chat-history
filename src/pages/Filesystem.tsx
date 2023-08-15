@@ -4,7 +4,7 @@ import { SupportedFormatter, supported_formatters } from "formatter/base";
 import { Fragment, useEffect, useState } from "react";
 import { getDirectoryFilesRecursively } from "utils/filetree";
 import { formatDurationFromSeconds } from "utils/string";
-import ConfigStore from "config_store";
+import ConfigStore from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 
 type Data = [SupportedFormatter, FileSystemDirectoryHandle];
