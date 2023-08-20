@@ -52,7 +52,10 @@ const App = () => {
           <ThemeToggle />
         </div>
       </div>
-      <div className="px-8 py-8">{routeResult || <NotFoundPage />}</div>
+      {/* This makes the page take up all the space minus 4rem for the padding and 4rem for the header */}
+      <div className="px-8 py-8 h-[calc(100vh-8rem)]">
+        {routeResult || <NotFoundPage />}
+      </div>
     </div>
   );
 };

@@ -13,9 +13,11 @@ import { useQueryParams } from "raviger";
 import { isValidDate, parseDateIntoDateBucket } from "utils/date";
 import { SupportedFormatter } from "formatter/base";
 import { SourceList } from "components/SourceList";
+import { Loading } from "components/Loading";
 
 export const Viewer = () => {
   const [search_result] = useQueryParams();
+  const [loading, set_loading] = useState(!!search_result.recipient);
   const [source, set_source] = useState<SupportedFormatter>(
     SupportedFormatter.Messenger
   );
@@ -29,6 +31,7 @@ export const Viewer = () => {
   };
 
   const get_first_day = (recipient: Recipient, source: SupportedFormatter) => {
+    set_loading(true);
     const fetchLogs = async () =>
       await ConfigStore.datasource_instance.retrieveFirstBucketFromStorage(
         recipient,
@@ -38,6 +41,7 @@ export const Viewer = () => {
     fetchLogs().then((logs) => {
       set_logs(logs);
       select_date(logs[0][ChatLogFormatTimestamp]);
+      set_loading(false);
     });
   };
 
@@ -64,6 +68,8 @@ export const Viewer = () => {
       return;
     }
 
+    set_loading(true);
+
     const fetchLogs = async () =>
       await ConfigStore.datasource_instance.retrieveBucketFromStorage(
         recipient,
@@ -84,6 +90,8 @@ export const Viewer = () => {
           line.scrollIntoView();
         }
       }
+
+      set_loading(false);
     });
   }, [date, recipient]);
 
@@ -108,11 +116,17 @@ export const Viewer = () => {
   return (
     <>
       <h1>This is the chat history page</h1>
-      <div className="tabs">
-        <SourceList select_item={set_source} selected_item={source} />
-      </div>
-      <div className="grid grid-cols-4">
-        <div className="col-span-1">
+      {/* This makes the page take up all the space minus 38px from the header and 42px from the header's margins */}
+      <div
+        className="grid grid-cols-4 h-[calc(100%-80px)]"
+        style={{ gridTemplateRows: "50px 1fr" }}
+      >
+        <div className="col-span-1 row-span-1">
+          <div className="tabs">
+            <SourceList select_item={set_source} selected_item={source} />
+          </div>
+        </div>
+        <div className="col-span-1 row-start-2">
           <RecipientList
             items={recipients}
             selected_item={recipient}
@@ -120,15 +134,27 @@ export const Viewer = () => {
             delete_item={delete_recipient}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 col-start-2 m-auto">
           <DatePicker date={date} select_date={select_date} />
-          {logs.length > 0 && (
+        </div>
+        <div className="col-span-3 row-start-2">
+          {!recipient ? (
+            <div className="flex justify-center h-full items-center">
+              <span>Select a recipient to view the first message</span>
+            </div>
+          ) : loading ? (
+            <div className="flex justify-center h-full">
+              <Loading />
+            </div>
+          ) : logs.length > 0 ? (
             <DateContainer date={logs[logs.length - 1][ChatLogFormatTimestamp]}>
               <SourceViewer
                 logs={logs.slice().reverse()}
                 recipient={recipient}
               />
             </DateContainer>
+          ) : (
+            <span>No messages for this day</span>
           )}
         </div>
       </div>
