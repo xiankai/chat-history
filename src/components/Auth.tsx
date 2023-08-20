@@ -60,7 +60,6 @@ export const Auth = () => {
     const firebaseUiWidget =
       firebaseui.auth.AuthUI.getInstance() ||
       new firebaseui.auth.AuthUI(firebaseAuth);
-    // if (uiConfig.signInFlow === "popup") firebaseUiWidget.reset();
 
     // We track the auth state to reset firebaseUi if the user signs out.
     const unregisterAuthObserver = onAuthStateChanged(
