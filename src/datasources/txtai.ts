@@ -20,7 +20,7 @@ import {
   parseTimestampIntoDateBucket,
   parseTimestampIntoDateString,
 } from "utils/date";
-import { uniqueId } from "lodash";
+import { groupBy, uniqueId } from "lodash";
 import { VITE_TXTAI_URL } from "../constants";
 import { DefaultService, DocumentDataFull, OpenAPI } from "./txtai/generated";
 import Cookies from "js-cookie";
@@ -186,8 +186,26 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
 
   async searchStorageByDate(
     query: SearchQuery,
+    source: Source,
     recipient: Recipient
   ): Promise<SearchResultByDate> {
-    throw new Error("Method not implemented.");
+    const response = await DefaultService.searchSearchGet({
+      q: query,
+      recipient,
+      source,
+    });
+
+    // group by date first
+    const grouped_by_date = groupBy(response, "date");
+
+    // apply response formatter
+    const formatted_entries = Object.entries(grouped_by_date).map(
+      ([date, docs]) => [date, docs.map(this.formatTxtaiResponse)]
+    );
+
+    // convert back to object
+    const grouped_by_date_and_formatted = Object.fromEntries(formatted_entries);
+
+    return grouped_by_date_and_formatted;
   }
 }
