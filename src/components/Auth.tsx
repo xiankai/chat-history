@@ -15,6 +15,7 @@ import {
 } from "../constants";
 
 export const Auth = () => {
+  const [loading, set_loading] = useState(true);
   const [user, set_user] = useState<User | null>(null);
   const [signout_handler, set_signout_handler] = useState<MouseEventHandler>();
   const elementRef = useRef(null);
@@ -80,6 +81,8 @@ export const Auth = () => {
             });
           });
         }
+
+        set_loading(false);
       }
     );
 
@@ -99,7 +102,7 @@ export const Auth = () => {
 
   return (
     <div className="dropdown dropdown-end">
-      {user ? (
+      {loading ? null : user ? (
         <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
           <div className="w-10 rounded-full">
             {user.photoURL ? <img src={user.photoURL}></img> : user.email}
