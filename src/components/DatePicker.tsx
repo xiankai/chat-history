@@ -1,8 +1,5 @@
-import {
-  // RangeDatePicker,
-  SingleDatePicker,
-} from "react-google-flight-datepicker";
-import "react-google-flight-datepicker/dist/main.css";
+import { useEffect, useState } from "react";
+import { formatDate } from "utils/date";
 
 export const DatePicker = ({
   date,
@@ -11,11 +8,19 @@ export const DatePicker = ({
   date?: Date;
   select_date: (date: Date) => void;
 }) => {
-  const handleChange = (date?: Date) => {
-    if (!date) {
-      date = new Date();
-    }
-    select_date(date);
-  };
-  return <SingleDatePicker startDate={date} onChange={handleChange} />;
+  // Workaround for allowing "Invalid Date", just not displaying it.
+  const [value, setValue] = useState("");
+  useEffect(() => {
+    const validDate = formatDate(date);
+    if (validDate) setValue(validDate);
+  }, [value, date]);
+
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={(e) => select_date(new Date(e.target.value))}
+      placeholder="Select a date"
+    />
+  );
 };

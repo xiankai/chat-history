@@ -34,6 +34,20 @@ export const parseDateBucketIntoDateString = (
   return [date_bucket.year, date_bucket.month, date_bucket.day].join("-");
 };
 
-export const isValidDate = (date: Date): boolean => {
+export const isValidDate = (date?: Date): date is Date => {
+  if (!date) return false;
   return !isNaN(date.getTime());
+};
+
+// YYYY-MM-DD
+export const formatDate = (date?: Date): string => {
+  if (!isValidDate(date)) {
+    return "";
+  }
+
+  return [
+    date.getFullYear(),
+    (date.getMonth() + 1).toString().padStart(2, "0"),
+    date.getDate().toString().padStart(2, "0"),
+  ].join("-");
 };
