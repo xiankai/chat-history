@@ -28,11 +28,7 @@ export const Auth = () => {
       signInFlow: "popup",
       // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
       // signInSuccessUrl: "/auth",
-      // We will display Google and Facebook as auth providers.
-      signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      ],
+      signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
       callbacks: {
         signInSuccessWithAuthResult(authResult, redirectUrl) {
           // User successfully signed in.
@@ -117,11 +113,11 @@ export const Auth = () => {
         className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"
       >
         {user && (
-          <li>
-            <button className="btn" onClick={signout_handler}>
-              Sign Out
-            </button>
-          </li>
+            <li>
+              <button className="btn" onClick={signout_handler}>
+                Sign Out
+              </button>
+            </li>
         )}
         <div ref={elementRef} />
       </ul>
