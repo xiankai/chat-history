@@ -32,10 +32,18 @@ export const Messenger = ({
             <TextMessage isRecipient={isRecipient} message={message} />
           )) ||
           (photos && (
-            <PhotoMessage photos={photos} assetPrefixUrl={assetPrefixUrl} />
+            <PhotoMessage
+              isRecipient={isRecipient}
+              photos={photos}
+              assetPrefixUrl={assetPrefixUrl}
+            />
           )) ||
           (videos && (
-            <VideoMessage videos={videos} assetPrefixUrl={assetPrefixUrl} />
+            <VideoMessage
+              isRecipient={isRecipient}
+              videos={videos}
+              assetPrefixUrl={assetPrefixUrl}
+            />
           ));
         return (
           <MessageContainer

@@ -3,14 +3,19 @@ import { MessengerMetadata } from "formatter/messenger";
 export const PhotoMessage = ({
   photos,
   assetPrefixUrl,
+  isRecipient,
 }: {
   photos: MessengerMetadata["photos"];
   assetPrefixUrl: string;
+  isRecipient: boolean;
 }) => {
   if (photos?.length === 1) {
     return (
       <div>
-        <a href={assetPrefixUrl + photos[0].uri}>
+        <a
+          href={assetPrefixUrl + photos[0].uri}
+          className={isRecipient ? "" : "rtl:"}
+        >
           <img
             src={assetPrefixUrl + photos[0].uri}
             className={`
@@ -21,7 +26,7 @@ export const PhotoMessage = ({
           />
         </a>
       </div>
-    )
+    );
   }
 
   return (

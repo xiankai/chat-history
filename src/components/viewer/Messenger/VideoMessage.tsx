@@ -1,20 +1,27 @@
-import { MessengerMetadata } from "formatter/messenger"
+import { MessengerMetadata } from "formatter/messenger";
 
 export const VideoMessage = ({
   videos,
-  assetPrefixUrl
+  assetPrefixUrl,
+  isRecipient,
 }: {
-  videos: MessengerMetadata['videos'],
-  assetPrefixUrl: string
+  videos: MessengerMetadata["videos"];
+  assetPrefixUrl: string;
+  isRecipient: boolean;
 }) => {
-  return <>
-    {videos?.map(video => (
-      <div className={`
-        w-48
-        h-48
-      `}>
-        <video src={assetPrefixUrl + video.uri} />
-      </div>
-    ))}
-  </>
-}
+  return (
+    <>
+      {videos?.map((video) => (
+        <div
+          className={`
+            min-w-[48]
+            h-48
+            ${isRecipient ? "" : "rtl"}
+          `}
+        >
+          <video src={assetPrefixUrl + video.uri} />
+        </div>
+      ))}
+    </>
+  );
+};
