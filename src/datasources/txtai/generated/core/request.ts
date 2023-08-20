@@ -259,6 +259,10 @@ const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): void =>
     }
 
     const error = errors[result.status];
+    if (result.status === 401) {
+        alert('You need to be signed in.')
+    }
+
     if (error) {
         throw new ApiError(options, result, error);
     }
