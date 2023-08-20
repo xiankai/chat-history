@@ -14,34 +14,34 @@ import {
   VITE_FIREBASE_AUTH_CONFIG_MEASUREMENT_ID,
 } from "../constants";
 
-// The Firebase UI Web UI Config object.
-// See: https://github.com/firebase/firebaseui-web#configuration
-const uiConfig: firebaseui.auth.Config = {
-  // Popup signin flow rather than redirect flow.
-  signInFlow: "popup",
-  // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-  // signInSuccessUrl: "/auth",
-  // We will display Google and Facebook as auth providers.
-  signInOptions: [
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-  ],
-  callbacks: {
-    signInSuccessWithAuthResult(authResult, redirectUrl) {
-      // User successfully signed in.
-      // Return type determines whether we continue the redirect automatically
-      // or whether we leave that to developer to handle.
-      // console.log(authResult, redirectUrl);
-      return false;
-    },
-  },
-};
-
 export const Auth = () => {
   const [user, setUser] = useState<User | null>(null);
   const elementRef = useRef(null);
 
   useEffect(() => {
+    // The Firebase UI Web UI Config object.
+    // See: https://github.com/firebase/firebaseui-web#configuration
+    const uiConfig: firebaseui.auth.Config = {
+      // Popup signin flow rather than redirect flow.
+      signInFlow: "popup",
+      // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+      // signInSuccessUrl: "/auth",
+      // We will display Google and Facebook as auth providers.
+      signInOptions: [
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      ],
+      callbacks: {
+        signInSuccessWithAuthResult(authResult, redirectUrl) {
+          // User successfully signed in.
+          // Return type determines whether we continue the redirect automatically
+          // or whether we leave that to developer to handle.
+          // console.log(authResult, redirectUrl);
+          return false;
+        },
+      },
+    };
+
     const firebaseConfig = {
       apiKey: VITE_FIREBASE_AUTH_CONFIG_API_KEY,
       authDomain: VITE_FIREBASE_AUTH_CONFIG_AUTH_DOMAIN,
@@ -86,7 +86,7 @@ export const Auth = () => {
       unregisterAuthObserver();
       firebaseUiWidget.reset();
     };
-  }, [firebaseui, uiConfig]);
+  }, []);
 
   return (
     <div className="dropdown dropdown-end">
