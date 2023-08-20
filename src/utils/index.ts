@@ -15,3 +15,9 @@ export const push_safe = (
     return 0;
   }
 };
+
+export const get_random_item = (arr: T[]): T => {
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  const randomChoice = arr[randomIndex];
+  return randomChoice;
+};
