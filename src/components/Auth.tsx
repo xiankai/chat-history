@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { User, onAuthStateChanged, initializeAuth } from "firebase/auth";
+import { User, onAuthStateChanged, getAuth } from "firebase/auth";
 import * as firebaseui from "firebaseui";
 import firebase from "firebase/compat/app";
 import "firebaseui/dist/firebaseui.css";
@@ -52,7 +52,8 @@ export const Auth = () => {
       measurementId: VITE_FIREBASE_AUTH_CONFIG_MEASUREMENT_ID,
     };
     const firebaseApp = firebase.initializeApp(firebaseConfig);
-    const firebaseAuth = initializeAuth(firebaseApp);
+    const firebaseAuth = getAuth(firebaseApp);
+
     // Get or Create a firebaseUI instance.
     const firebaseUiWidget =
       firebaseui.auth.AuthUI.getInstance() ||
