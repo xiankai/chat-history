@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { User, onAuthStateChanged, getAuth } from "firebase/auth";
 import * as firebaseui from "firebaseui";
 import firebase from "firebase/compat/app";
@@ -16,6 +16,7 @@ import {
 
 export const Auth = () => {
   const [user, set_user] = useState<User | null>(null);
+  const [signout_handler, set_signout_handler] = useState<MouseEventHandler>();
   const elementRef = useRef(null);
 
   useEffect(() => {
@@ -79,6 +80,10 @@ export const Auth = () => {
       }
     );
 
+    set_signout_handler(() => () => {
+      firebaseAuth.signOut().then(() => set_user(null));
+    });
+
     // Render the firebaseUi Widget.
     // @ts-ignore
     firebaseUiWidget.start(elementRef.current, uiConfig);
@@ -106,6 +111,13 @@ export const Auth = () => {
         tabIndex={0}
         className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"
       >
+        {user && (
+          <li>
+            <button className="btn" onClick={signout_handler}>
+              Sign Out
+            </button>
+          </li>
+        )}
         <div ref={elementRef} />
       </ul>
     </div>
