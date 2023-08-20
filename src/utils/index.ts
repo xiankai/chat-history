@@ -16,7 +16,7 @@ export const push_safe = (
   }
 };
 
-export const get_random_item = (arr: T[]): T => {
+export const get_random_item = <T>(arr: T[]): T => {
   const randomIndex = Math.floor(Math.random() * arr.length);
   const randomChoice = arr[randomIndex];
   return randomChoice;
