@@ -15,7 +15,7 @@ import {
 } from "../constants";
 
 export const Auth = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, set_user] = useState<User | null>(null);
   const elementRef = useRef(null);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export const Auth = () => {
 
         // user is signed in for the first time
         if (userObject && !user) {
-          setUser(userObject);
+          set_user(userObject);
           userObject.getIdToken().then((firebase_token) => {
             Cookies.set("firebase_token", firebase_token, {
               expires: 1 / 24,
