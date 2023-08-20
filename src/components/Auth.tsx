@@ -69,6 +69,7 @@ export const Auth = () => {
 
         // user is signed in for the first time
         if (userObject && !user) {
+          firebaseUiWidget.reset();
           set_user(userObject);
           userObject.getIdToken().then((firebase_token) => {
             Cookies.set("firebase_token", firebase_token, {
