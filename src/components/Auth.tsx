@@ -113,11 +113,18 @@ export const Auth = () => {
         className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"
       >
         {user && (
+          <>
+            <li>
+              <p>
+                Signed in as {user.email} with {user.providerData[0].providerId}
+              </p>
+            </li>
             <li>
               <button className="btn" onClick={signout_handler}>
                 Sign Out
               </button>
             </li>
+          </>
         )}
         <div ref={elementRef} />
       </ul>
