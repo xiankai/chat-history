@@ -36,7 +36,6 @@ export const ProgressBar = ({
         return duration_ms + interval;
       });
     }, interval);
-    console.log(interval_id);
   }, []);
 
   return (
