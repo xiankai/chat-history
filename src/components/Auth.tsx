@@ -66,7 +66,10 @@ export const Auth = () => {
       firebaseAuth,
       (userObject) => {
         // user has signed out. Reset the UI.
-        if (!userObject && user) firebaseUiWidget.reset();
+        if (!userObject) {
+          // @ts-ignore
+          firebaseUiWidget.start(elementRef.current, uiConfig);
+        }
 
         // user is signed in for the first time
         if (userObject && !user) {
