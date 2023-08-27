@@ -7,8 +7,8 @@ export const Upload = () => {
   const [loading, set_loading] = useState(false);
   const [progress_bars, set_progress_bars] = useState<ProgressBarProps[]>([]);
 
-  const MSNXMLRef = createRef<HTMLInputElement>();
-  const handleMSNXML = (files: FileList | null) => {
+  const MSNTXTRef = createRef<HTMLInputElement>();
+  const handleMSNTXT = (files: FileList | null) => {
     if (!files) return;
     handle_start();
     Array.from(files).forEach((file) => {
@@ -45,7 +45,7 @@ export const Upload = () => {
   };
 
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
-    handleMSNXML(e.currentTarget.files);
+    handleMSNTXT(e.currentTarget.files);
 
   const handle_start = () => {
     set_progress_bars([]);
@@ -104,8 +104,8 @@ export const Upload = () => {
       handleMessengerJSON(MessengerJSONRef.current.files);
     }
 
-    if (MSNXMLRef.current?.files?.length) {
-      handleMessengerJSON(MSNXMLRef.current.files);
+    if (MSNTXTRef.current?.files?.length) {
+      handleMessengerJSON(MSNTXTRef.current.files);
     }
   };
 
@@ -118,8 +118,8 @@ export const Upload = () => {
       </div>
 
       <label>
-        <span className="label">MSN XML</span>
-        <input type="file" multiple className="file-input" ref={MSNXMLRef} />
+        <span className="label">MSN TXT</span>
+        <input type="file" multiple className="file-input" ref={MSNTXTRef} />
       </label>
 
       <label>
