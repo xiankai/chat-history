@@ -9,6 +9,7 @@ export type DocumentDataFull = {
     line_number: number;
     source_metadata: string;
     date: string;
+    recipient: string;
     source: string;
 };
 

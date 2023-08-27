@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate-client": "openapi -i http://localhost:8000/openapi.json -o ./src/datasources/txtai/generated --useOptions",
+    "generate-client": "openapi -i http://127.0.0.1:8000/openapi.json -o ./src/datasources/txtai/generated --useOptions",
     "test": "jest",
     "dev": "vite",
     "build": "tsc && vite build",

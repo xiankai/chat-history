@@ -41,7 +41,7 @@ export class DefaultService {
         q,
         fromDate,
         toDate,
-        limit = 10,
+        limit = 100,
         offset,
         sortBy = 'timestamp_ms',
         order = 'desc',
@@ -107,11 +107,11 @@ export class DefaultService {
     }
 
     /**
-     * Day
+     * First Day
      * @returns DocumentDataFull Successful Response
      * @throws ApiError
      */
-    public static dayFirstDayGet({
+    public static firstDayFirstDayGet({
         recipient,
         source,
     }: {
@@ -132,11 +132,11 @@ export class DefaultService {
     }
 
     /**
-     * Day
+     * Last Day
      * @returns DocumentDataFull Successful Response
      * @throws ApiError
      */
-    public static dayLastDayGet({
+    public static lastDayLastDayGet({
         recipient,
         source,
     }: {
