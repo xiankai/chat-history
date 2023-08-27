@@ -40,12 +40,16 @@ export const ProgressBar = ({
 
   return (
     <>
-      <span className="label">
-        {error_message ||
-          text_template
-            .replace("{current}", current_progress.toLocaleString())
-            .replace("{total}", total_progress.toLocaleString())}
-      </span>
+      <p>
+        {error_message && (
+          <span className="alert alert-error line-clamp-3">
+            {error_message}
+          </span>
+        )}
+        {text_template
+          .replace("{current}", current_progress.toLocaleString())
+          .replace("{total}", total_progress.toLocaleString())}
+      </p>
       <progress value={current_progress} max={total_progress}></progress>
       <span className="label">
         Time elapsed {formatDurationFromMilliseconds(duration_ms)}
