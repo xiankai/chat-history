@@ -126,7 +126,7 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
     return progress_tracker_callback;
   }
 
-  async retrieveBucketListFromStorage(): Promise<Recipient[]> {
+  async retrieveBucketListFromStorage(source: Source): Promise<Recipient[]> {
     return (await keys(recipientStore)) || [];
   }
 

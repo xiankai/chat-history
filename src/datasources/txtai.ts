@@ -115,8 +115,8 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     return () => finished;
   }
 
-  async retrieveBucketListFromStorage(): Promise<Recipient[]> {
-    return DefaultService.recipientsRecipientsGet();
+  async retrieveBucketListFromStorage(source: Source): Promise<Recipient[]> {
+    return DefaultService.recipientsRecipientsGet({ source });
   }
 
   async retrieveBucketFromStorage(

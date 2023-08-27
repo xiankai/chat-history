@@ -15,10 +15,20 @@ export class DefaultService {
      * @returns string Successful Response
      * @throws ApiError
      */
-    public static recipientsRecipientsGet(): CancelablePromise<Array<string>> {
+    public static recipientsRecipientsGet({
+        source,
+    }: {
+        source: string,
+    }): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/recipients',
+            query: {
+                'source': source,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
         });
     }
 

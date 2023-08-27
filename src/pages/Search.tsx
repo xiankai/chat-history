@@ -22,10 +22,12 @@ export const Search = () => {
 
   useEffect(() => {
     const fetchRecipients = async () =>
-      await ConfigStore.datasource_instance.retrieveBucketListFromStorage();
+      await ConfigStore.datasource_instance.retrieveBucketListFromStorage(
+        source
+      );
 
     fetchRecipients().then((recipients) => set_recipients(recipients));
-  }, []);
+  }, [source]);
 
   const [search, setSearch] = useState("");
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>

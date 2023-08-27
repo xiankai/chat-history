@@ -95,7 +95,7 @@ export interface AsyncBaseDatasource {
     source_metadata: SourceMetadata
   ): void;
 
-  retrieveBucketListFromStorage(): Promise<Recipient[]>;
+  retrieveBucketListFromStorage(source: Source): Promise<Recipient[]>;
 
   retrieveBucketFromStorage(
     recipient: Recipient,

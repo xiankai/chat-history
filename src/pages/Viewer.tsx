@@ -47,11 +47,11 @@ export const Viewer = () => {
 
   const [recipients, set_recipients] = useState<string[]>([]);
   const fetch_recipients = async () =>
-    await ConfigStore.datasource_instance.retrieveBucketListFromStorage();
+    await ConfigStore.datasource_instance.retrieveBucketListFromStorage(source);
 
   useEffect(() => {
     fetch_recipients().then((recipients) => set_recipients(recipients));
-  }, []);
+  }, [source]);
 
   const [date, select_date] = useState(new Date(search_result.date));
 
