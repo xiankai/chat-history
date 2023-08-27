@@ -24,6 +24,7 @@ class RecipientStore {
 
   set_source(source: Source) {
     this.source = source;
+    this.set_recipients([]);
   }
 
   async fetch_recipients() {

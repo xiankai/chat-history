@@ -137,7 +137,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     recipient: string,
     source: string
   ): Promise<ChatLogFormat[]> {
-    const response = await DefaultService.dayFirstDayGet({
+    const response = await DefaultService.firstDayFirstDayGet({
       recipient,
       source,
     });
@@ -149,7 +149,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     recipient: string,
     source: string
   ): Promise<ChatLogFormat[]> {
-    const response = await DefaultService.dayLastDayGet({
+    const response = await DefaultService.lastDayLastDayGet({
       recipient,
       source,
     });
