@@ -48,19 +48,23 @@ export const Filesystem = () => {
       alert("Formatter not selected");
       return;
     }
+    const formatter_instance = ConfigStore.get_formatter_instance(formatter);
     handle_start();
     Promise.all(
       filesystems.map(async ([, directoryHandle]) => {
-        const fileHandles = await getDirectoryFilesRecursively(directoryHandle);
+        const fileHandles = await getDirectoryFilesRecursively(
+          directoryHandle,
+          formatter_instance.isValidFileFormat
+        );
 
         return Promise.all(
           fileHandles.map(async (fileHandle) => {
             const file = await fileHandle.getFile();
             const contents = await file.text();
 
-            const { metadata, messages } = ConfigStore.get_formatter_instance(
-              formatter
-            ).formatChatLog(contents.trim());
+            const { metadata, messages } = formatter_instance.formatChatLog(
+              contents.trim()
+            );
 
             const progress_tracker_callback =
               ConfigStore.datasource_instance.bulkAddToStorage(

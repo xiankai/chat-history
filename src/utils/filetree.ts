@@ -18,15 +18,21 @@ interface DirectoryNode extends TreeNode {
   children: TreeNode[];
 }
 
+type FileFormatChecker = (file: FileSystemFileHandle) => boolean;
+
 export async function getDirectoryFilesRecursively(
-  directoryHandle: FileSystemDirectoryHandle
+  directoryHandle: FileSystemDirectoryHandle,
+  isValidFileFormat: FileFormatChecker
 ): Promise<FileSystemFileHandle[]> {
   const files: FileSystemFileHandle[] = [];
   for await (const entry of directoryHandle.values()) {
-    if (entry.isDirectory) {
-      const subDirectoryFiles = await getDirectoryFilesRecursively(entry);
+    if (entry.kind === "directory") {
+      const subDirectoryFiles = await getDirectoryFilesRecursively(
+        entry,
+        isValidFileFormat
+      );
       files.push(...subDirectoryFiles);
-    } else if (entry.name.endsWith(".json")) {
+    } else if (isValidFileFormat(entry)) {
       files.push(entry);
     }
   }

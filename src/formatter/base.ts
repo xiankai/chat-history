@@ -17,6 +17,8 @@ interface BaseFormatter {
 
 abstract class BaseFormatter {
   abstract formatChatLog(input: string): ChatLog;
+
+  abstract isValidFileFormat(file: FileSystemFileHandle): boolean;
 }
 
 export default BaseFormatter;

@@ -31,6 +31,10 @@ export default class MessengerFormatter extends BaseFormatter {
       ]),
     };
   }
+
+  isValidFileFormat(file: FileSystemFileHandle): boolean {
+    return file.name.endsWith(".json");
+  }
 }
 
 export type MessengerChatFormat = {
