@@ -67,7 +67,8 @@ export default interface BaseDatasource {
     timestamp: Timestamp,
     message: Message,
     source: Source,
-    source_metadata: SourceMetadata
+    source_metadata: SourceMetadata,
+    sender: Sender
   ): void;
 
   retrieveBucketListFromStorage(): Recipient[];

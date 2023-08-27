@@ -13,6 +13,7 @@ import BaseDatasource, {
   Index,
   SearchResult,
   Recipient,
+  Sender,
 } from "./base";
 import { push_safe } from "utils";
 
@@ -47,7 +48,8 @@ export default class LocalStorageDatasource implements BaseDatasource {
     timestamp: Timestamp,
     message: Message,
     source: Source,
-    source_metadata: SourceMetadata
+    source_metadata: SourceMetadata,
+    sender: Sender
   ) {
     const recipients = this.getStorageItem("recipients", "");
     const recipient_array = recipients.split(",");
@@ -66,6 +68,7 @@ export default class LocalStorageDatasource implements BaseDatasource {
       message,
       source,
       source_metadata,
+      sender,
     ];
     const inserted_index = push_safe(
       stored_logs,

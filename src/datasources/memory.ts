@@ -13,6 +13,7 @@ import BaseDatasource, {
   Index,
   SearchResult,
   Recipient,
+  Sender,
 } from "./base";
 import { push_safe } from "utils";
 
@@ -62,7 +63,8 @@ export default class MemoryDatasource implements BaseDatasource {
     timestamp: Timestamp,
     message: Message,
     source: Source,
-    source_metadata: SourceMetadata
+    source_metadata: SourceMetadata,
+    sender: Sender
   ) {
     if (this.store.recipients.includes(recipient)) {
       this.store.recipients.push(recipient);
@@ -75,6 +77,7 @@ export default class MemoryDatasource implements BaseDatasource {
       message,
       source,
       source_metadata,
+      sender,
     ];
     push_safe(this.store.logs, [recipient, year, month, day], chat_log);
   }
