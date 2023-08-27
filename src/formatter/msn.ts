@@ -30,6 +30,13 @@ export default class MSNFormatter extends BaseFormatter {
     return /\[(\d{1,2}):(\d{2}):(\d{2}) ([A|P]M)] (.*): (.*)/;
   }
 
+  getHeaderLength(lines: string[]): number {
+    // The start of the header is the same as the end of the header, so we search for it again
+    const start = lines[0];
+    const end = lines.findIndex((line, index) => index !== 0 && line === start);
+    return end + 1;
+  }
+
   formatHeaders(lines: string[]): ChatLogMetadata {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [session_start, _, ...participants_string] = lines;
@@ -107,22 +114,23 @@ export default class MSNFormatter extends BaseFormatter {
   }
 
   formatChatLog(input: string): ChatLog {
-    const sessions = input.split(/[\r\n]{6}/);
+    const sessions = input.split(/[\r\n]{6}/); // 3 newlines between sessions (1 newline = 2 characters of \r\n)
 
     let line_counter = 0;
     let metadata: ChatLogMetadata | undefined;
     const messages: ChatLogFormat[] = [];
     sessions.forEach((session) => {
-      line_counter += 6; // headers
       const lines = session.split("\n");
+      const header_length = this.getHeaderLength(lines);
+      line_counter += header_length; // headers
       if (!metadata) {
-        metadata = this.formatHeaders(lines.slice(1, 5));
+        metadata = this.formatHeaders(lines.slice(1, header_length - 1)); // Only use the first session's headers
       } else {
         line_counter += 3; // spacing between sessions
       }
 
       let chat_log: ChatLogFormat | undefined;
-      lines.slice(6).forEach((line) => {
+      lines.slice(header_length).forEach((line) => {
         line_counter++;
         try {
           const temp_chat_log = this.formatMessage(
@@ -139,7 +147,7 @@ export default class MSNFormatter extends BaseFormatter {
         } catch (e) {
           // old entry, so we add to it
           if (e instanceof ParsingError) {
-            chat_log![2] += " " + line.slice(13);
+            chat_log![ChatLogFormatMessage] += " " + line.slice(13);
           } else {
             throw e;
           }
