@@ -2,6 +2,7 @@ import {
   ChatLogFormat,
   ChatLogFormatLineNumber,
   ChatLogFormatMessage,
+  ChatLogFormatSender,
   ChatLogFormatSourceMetadata,
   ChatLogFormatTimestamp,
 } from "datasources/base";
@@ -22,11 +23,11 @@ export const Messenger = ({
   return (
     <div className="flex flex-col">
       {logs.map((log, i) => {
-        const { sender_name, photos, reactions, videos } = log[
+        const { photos, reactions, videos } = log[
           ChatLogFormatSourceMetadata
         ] as MessengerMetadata;
         const message = log[ChatLogFormatMessage];
-        const isRecipient = sender_name === recipient;
+        const isRecipient = log[ChatLogFormatSender] === recipient;
         const content =
           (message && (
             <TextMessage isRecipient={isRecipient} message={message} />

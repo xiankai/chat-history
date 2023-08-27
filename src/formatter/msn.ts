@@ -1,6 +1,7 @@
 import {
   ChatLog,
   ChatLogFormat,
+  ChatLogFormatSourceMetadata,
   ChatLogMetadata,
   LineNumber,
 } from "datasources/base";
@@ -100,7 +101,8 @@ export default class MSNFormatter extends BaseFormatter {
       timestamp,
       message as string,
       this.source(),
-      { sender },
+      {},
+      sender,
     ];
   }
 

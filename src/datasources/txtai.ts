@@ -14,6 +14,7 @@ import {
   ChatLogFormatLineNumber,
   Source,
   ChatLogFormatSourceMetadata,
+  ChatLogFormatSender,
 } from "./base";
 import {
   parseDateBucketIntoDateString,
@@ -85,6 +86,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
       document.text,
       document.source,
       JSON.parse(document.source_metadata),
+      document.sender,
     ];
   }
 
@@ -101,9 +103,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
         docs: messages.map((message) => ({
           text: message[ChatLogFormatMessage],
           date: parseTimestampIntoDateString(message[ChatLogFormatTimestamp]),
-          recipient: message[ChatLogFormatSourceMetadata][
-            "sender_name"
-          ] as string,
+          sender: message[ChatLogFormatSender],
           timestamp: +message[ChatLogFormatTimestamp] / 1000,
           line_number: message[ChatLogFormatLineNumber],
           source_metadata: message[ChatLogFormatSourceMetadata],

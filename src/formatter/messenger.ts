@@ -1,4 +1,8 @@
-import { ChatLog } from "datasources/base";
+import {
+  ChatLog,
+  ChatLogFormat,
+  ChatLogFormatSourceMetadata,
+} from "datasources/base";
 import BaseFormatter, { SupportedFormatter } from "./base";
 
 export default class MessengerFormatter extends BaseFormatter {
@@ -23,11 +27,11 @@ export default class MessengerFormatter extends BaseFormatter {
         message.content || "",
         this.source(),
         {
-          sender_name: message.sender_name,
           photos: message.photos,
           reactions: message.reactions,
           videos: message.videos,
         },
+        message.sender_name,
       ]),
     };
   }

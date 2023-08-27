@@ -10,6 +10,7 @@ export type LineNumber = number;
 export type Term = string;
 export type Timestamp = Date;
 export type Message = string;
+export type Sender = string;
 export type Source = string;
 export type SourceMetadata = Record<string, unknown>;
 
@@ -28,7 +29,8 @@ export type ChatLogFormat = [
   Timestamp,
   Message,
   Source,
-  SourceMetadata
+  SourceMetadata,
+  Sender
 ];
 
 export const ChatLogFormatLineNumber = 0;
@@ -36,6 +38,7 @@ export const ChatLogFormatTimestamp = 1;
 export const ChatLogFormatMessage = 2;
 export const ChatLogFormatSource = 3;
 export const ChatLogFormatSourceMetadata = 4;
+export const ChatLogFormatSender = 5;
 
 export type ChatLog = {
   metadata: ChatLogMetadata;

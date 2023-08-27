@@ -2,6 +2,7 @@ import {
   ChatLogFormat,
   ChatLogFormatLineNumber,
   ChatLogFormatMessage,
+  ChatLogFormatSender,
   ChatLogFormatSource,
   ChatLogFormatSourceMetadata,
   ChatLogFormatTimestamp,
@@ -27,7 +28,7 @@ export const CSVExport = ({
           new Date(log[ChatLogFormatTimestamp]).getTime(),
           log[ChatLogFormatMessage].replace('"', '\\"'),
           log[ChatLogFormatSource],
-          log[ChatLogFormatSourceMetadata].sender,
+          log[ChatLogFormatSender],
           recipient,
           "2008-12-22",
         ]
