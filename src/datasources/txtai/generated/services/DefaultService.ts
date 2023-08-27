@@ -39,8 +39,8 @@ export class DefaultService {
      */
     public static searchSearchGet({
         q,
-        fromDate = '',
-        toDate = '',
+        fromDate,
+        toDate,
         limit = 10,
         offset,
         sortBy = 'timestamp_ms',

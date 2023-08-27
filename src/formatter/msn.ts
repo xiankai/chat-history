@@ -158,7 +158,6 @@ export default class MSNFormatter extends BaseFormatter {
   }
 
   isValidFileFormat(file: FileSystemFileHandle): boolean {
-    console.log(file);
     return file.name.endsWith(".txt");
   }
 }
