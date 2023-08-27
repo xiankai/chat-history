@@ -68,7 +68,7 @@ export const Filesystem = () => {
 
             const progress_tracker_callback =
               config_store.datasource_instance.bulkAddToStorage(
-                metadata.participants[0].identifier,
+                formatter_instance.getRecipient(metadata),
                 formatter,
                 messages
               );

@@ -17,11 +17,12 @@ export const Upload = () => {
         const { metadata, messages } = config_store.msn_formatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
-        const recipient = metadata.participants[1].identifier;
 
         const progress_tracker_callback =
           config_store.datasource_instance.bulkAddToStorage(
-            recipient,
+            config_store
+              .get_formatter_instance(SupportedFormatter.MSN)
+              .getRecipient(metadata),
             SupportedFormatter.MSN,
             messages,
             config_store.tokenizer_instance.asyncParseMessage.bind(
@@ -69,7 +70,9 @@ export const Upload = () => {
 
         const progress_tracker_callback =
           config_store.datasource_instance.bulkAddToStorage(
-            metadata.participants[0].identifier,
+            config_store
+              .get_formatter_instance(SupportedFormatter.Messenger)
+              .getRecipient(metadata),
             SupportedFormatter.Messenger,
             messages,
             config_store.tokenizer_instance.asyncParseMessage.bind(

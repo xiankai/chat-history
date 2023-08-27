@@ -18,6 +18,8 @@ interface BaseFormatter {
 abstract class BaseFormatter {
   abstract formatChatLog(input: string): ChatLog;
 
+  abstract getRecipient(metadata: ChatLogMetadata): string;
+
   abstract isValidFileFormat(file: FileSystemFileHandle): boolean;
 }
 

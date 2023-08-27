@@ -1,7 +1,7 @@
 import {
   ChatLog,
   ChatLogFormat,
-  ChatLogFormatSourceMetadata,
+  ChatLogFormatMessage,
   ChatLogMetadata,
   LineNumber,
 } from "datasources/base";
@@ -155,6 +155,10 @@ export default class MSNFormatter extends BaseFormatter {
       metadata: metadata!,
       messages,
     };
+  }
+
+  getRecipient(metadata: ChatLogMetadata): string {
+    return metadata.participants[1].identifier;
   }
 
   isValidFileFormat(file: FileSystemFileHandle): boolean {

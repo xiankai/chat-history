@@ -2,6 +2,7 @@ import {
   ChatLog,
   ChatLogFormat,
   ChatLogFormatSourceMetadata,
+  ChatLogMetadata,
 } from "datasources/base";
 import BaseFormatter, { SupportedFormatter } from "./base";
 
@@ -34,6 +35,10 @@ export default class MessengerFormatter extends BaseFormatter {
         message.sender_name,
       ]),
     };
+  }
+
+  getRecipient(metadata: ChatLogMetadata): string {
+    return metadata.participants[0].identifier;
   }
 
   isValidFileFormat(file: FileSystemFileHandle): boolean {
