@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import ConfigStore, { ConfigFormat } from "stores/config_store";
+import config_store, { ConfigFormat } from "stores/config_store";
 
 const Button = ({
   data_key,
@@ -26,12 +26,12 @@ export const Config = observer(() => {
       <div>
         <label className="label">Tokenizer strategy</label>
         <div className="btn-group">
-          {ConfigStore.tokenizers.map((tokenizer) => (
+          {config_store.tokenizers.map((tokenizer) => (
             <Button
               key={tokenizer.data_key}
               {...tokenizer}
-              active={ConfigStore.tokenizer === tokenizer.data_key}
-              on_click={() => (ConfigStore.tokenizer = tokenizer.data_key)}
+              active={config_store.tokenizer === tokenizer.data_key}
+              on_click={() => (config_store.tokenizer = tokenizer.data_key)}
             />
           ))}
         </div>
@@ -39,12 +39,12 @@ export const Config = observer(() => {
       <div>
         <label className="label">Data storage location</label>
         <div className="btn-group">
-          {ConfigStore.datasources.map((datasource) => (
+          {config_store.datasources.map((datasource) => (
             <Button
               key={datasource.data_key}
               {...datasource}
-              active={ConfigStore.datasource === datasource.data_key}
-              on_click={() => (ConfigStore.datasource = datasource.data_key)}
+              active={config_store.datasource === datasource.data_key}
+              on_click={() => (config_store.datasource = datasource.data_key)}
             />
           ))}
         </div>

@@ -18,7 +18,7 @@ export type ConfigFormat = {
   instance: any;
 };
 
-class ConfigStore {
+class config_store {
   datasources: ConfigFormat[] = [
     {
       data_key: "local",
@@ -115,4 +115,4 @@ class ConfigStore {
   }
 }
 
-export default new ConfigStore();
+export default new config_store();

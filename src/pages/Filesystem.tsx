@@ -4,7 +4,7 @@ import { SupportedFormatter, supported_formatters } from "formatter/base";
 import { Fragment, useEffect, useState } from "react";
 import { getDirectoryFilesRecursively } from "utils/filetree";
 import { formatDurationFromSeconds } from "utils/string";
-import ConfigStore from "stores/config_store";
+import config_store from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 
 type Data = [SupportedFormatter, FileSystemDirectoryHandle];
@@ -48,7 +48,7 @@ export const Filesystem = () => {
       alert("Formatter not selected");
       return;
     }
-    const formatter_instance = ConfigStore.get_formatter_instance(formatter);
+    const formatter_instance = config_store.get_formatter_instance(formatter);
     handle_start();
     Promise.all(
       filesystems.map(async ([, directoryHandle]) => {
@@ -67,7 +67,7 @@ export const Filesystem = () => {
             );
 
             const progress_tracker_callback =
-              ConfigStore.datasource_instance.bulkAddToStorage(
+              config_store.datasource_instance.bulkAddToStorage(
                 metadata.participants[0].identifier,
                 formatter,
                 messages

@@ -1,5 +1,5 @@
 import { createRef, FormEventHandler, useState } from "react";
-import ConfigStore from "stores/config_store";
+import config_store from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 import { SupportedFormatter } from "formatter/base";
 
@@ -14,18 +14,18 @@ export const Upload = () => {
     Array.from(files).forEach((file) => {
       const fr = new FileReader();
       fr.onload = (e) => {
-        const { metadata, messages } = ConfigStore.msn_formatter.formatChatLog(
+        const { metadata, messages } = config_store.msn_formatter.formatChatLog(
           (e?.target?.result as string)?.trim()
         );
         const recipient = metadata.participants[1].identifier;
 
         const progress_tracker_callback =
-          ConfigStore.datasource_instance.bulkAddToStorage(
+          config_store.datasource_instance.bulkAddToStorage(
             recipient,
             SupportedFormatter.MSN,
             messages,
-            ConfigStore.tokenizer_instance.asyncParseMessage.bind(
-              ConfigStore.tokenizer_instance
+            config_store.tokenizer_instance.asyncParseMessage.bind(
+              config_store.tokenizer_instance
             )
           );
 
@@ -63,17 +63,17 @@ export const Upload = () => {
       const fr = new FileReader();
       fr.onload = async (e) => {
         const { metadata, messages } =
-          ConfigStore.messenger_formatter.formatChatLog(
+          config_store.messenger_formatter.formatChatLog(
             (e?.target?.result as string)?.trim()
           );
 
         const progress_tracker_callback =
-          ConfigStore.datasource_instance.bulkAddToStorage(
+          config_store.datasource_instance.bulkAddToStorage(
             metadata.participants[0].identifier,
             SupportedFormatter.Messenger,
             messages,
-            ConfigStore.tokenizer_instance.asyncParseMessage.bind(
-              ConfigStore.tokenizer_instance
+            config_store.tokenizer_instance.asyncParseMessage.bind(
+              config_store.tokenizer_instance
             )
           );
 

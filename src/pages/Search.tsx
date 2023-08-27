@@ -1,6 +1,6 @@
 import { RecipientList } from "components/RecipientList";
 import { FormEventHandler, useEffect, useState } from "react";
-import ConfigStore from "stores/config_store";
+import config_store from "stores/config_store";
 import { SourceViewer } from "components/SourceViewer";
 import {
   ChatLogFormatLineNumber,
@@ -22,7 +22,7 @@ export const Search = () => {
 
   useEffect(() => {
     const fetchRecipients = async () =>
-      await ConfigStore.datasource_instance.retrieveBucketListFromStorage(
+      await config_store.datasource_instance.retrieveBucketListFromStorage(
         source
       );
 
@@ -40,7 +40,7 @@ export const Search = () => {
       return;
     }
 
-    ConfigStore.datasource_instance
+    config_store.datasource_instance
       .searchStorageByDate(search, source, recipient)
       .then((data) => set_search_results(data));
   }, [search, recipient]);
