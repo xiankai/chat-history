@@ -12,9 +12,11 @@ import { SearchResultWrapper } from "components/viewer/Messenger/SearchResultWra
 import { parseTimestampIntoDateBucket } from "utils/date";
 import { SourceList } from "components/SourceList";
 import recipient_store from "stores/recipient_store";
+import { useDebounce } from "@uidotdev/usehooks";
 
 export const Search = () => {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 1000);
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     setSearch(e.currentTarget.value);
 
@@ -34,7 +36,7 @@ export const Search = () => {
         recipient_store.recipient
       )
       .then((data) => set_search_results(data));
-  }, [search]);
+  }, [debouncedSearch]);
 
   return (
     <>
