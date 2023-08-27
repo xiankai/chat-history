@@ -10,25 +10,10 @@ import {
 import { DateContainer } from "components/viewer/Messenger/DateContainer";
 import { SearchResultWrapper } from "components/viewer/Messenger/SearchResultWrapper";
 import { parseTimestampIntoDateBucket } from "utils/date";
-import { SupportedFormatter } from "formatter/base";
 import { SourceList } from "components/SourceList";
+import recipient_store from "stores/recipient_store";
 
 export const Search = () => {
-  const [source, set_source] = useState<SupportedFormatter>(
-    SupportedFormatter.Messenger
-  );
-  const [recipient, select_recipient] = useState("");
-  const [recipients, set_recipients] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchRecipients = async () =>
-      await config_store.datasource_instance.retrieveBucketListFromStorage(
-        source
-      );
-
-    fetchRecipients().then((recipients) => set_recipients(recipients));
-  }, [source]);
-
   const [search, setSearch] = useState("");
   const handleChange: FormEventHandler<HTMLInputElement> = (e) =>
     setSearch(e.currentTarget.value);
@@ -40,10 +25,16 @@ export const Search = () => {
       return;
     }
 
+    if (!recipient_store.recipient) return;
+
     config_store.datasource_instance
-      .searchStorageByDate(search, source, recipient)
+      .searchStorageByDate(
+        search,
+        recipient_store.source,
+        recipient_store.recipient
+      )
       .then((data) => set_search_results(data));
-  }, [search, recipient]);
+  }, [search]);
 
   return (
     <>
@@ -59,25 +50,24 @@ export const Search = () => {
               className="input input-bordered w-[80%]"
             />
           </div>
-          <SourceList selected_item={source} select_item={set_source} />
-          <RecipientList
-            items={recipients}
-            selected_item={recipient}
-            select_item={select_recipient}
-          />
+          <SourceList />
+          <RecipientList />
         </div>
         <div className="col-span-3">
           {Object.values(search_results).map((logs) => (
             <DateContainer date={logs[0][ChatLogFormatTimestamp]}>
               {logs.map((log) => (
                 <SearchResultWrapper
-                  recipient={recipient}
+                  recipient={recipient_store.recipient!}
                   dateBucketReference={parseTimestampIntoDateBucket(
                     log[ChatLogFormatTimestamp]
                   )}
                   lineNumber={log[ChatLogFormatLineNumber]}
                 >
-                  <SourceViewer logs={[log]} recipient={recipient} />
+                  <SourceViewer
+                    logs={[log]}
+                    recipient={recipient_store.recipient!}
+                  />
                 </SearchResultWrapper>
               ))}
             </DateContainer>

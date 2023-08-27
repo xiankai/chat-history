@@ -1,25 +1,24 @@
-import ConfigStore from "stores/config_store";
-import { SupportedFormatter } from "formatter/base";
+import { observer } from "mobx-react-lite";
+import config_store from "stores/config_store";
+import recipient_store from "stores/recipient_store";
 
-export type SourceListProps = {
-  selected_item: SupportedFormatter;
-  select_item: (item: SupportedFormatter) => void;
-};
-
-export const SourceList = ({ selected_item, select_item }: SourceListProps) => {
+export const SourceList = observer(() => {
   return (
     <>
-      {ConfigStore.get_formatters().map((formatter) => (
+      {config_store.get_formatters().map((formatter) => (
         <div
           key={formatter.value}
           className={`tab tab-lifted tab-lg ${
-            formatter.value === selected_item ? "tab-active" : ""
+            formatter.value === recipient_store.source ? "tab-active" : ""
           }`}
-          onClick={() => select_item(formatter.value)}
+          onClick={() => {
+            recipient_store.set_source(formatter.value);
+            recipient_store.fetch_recipients();
+          }}
         >
           {formatter.label}
         </div>
       ))}
     </>
   );
-};
+});

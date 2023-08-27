@@ -1,46 +1,50 @@
+import { observer } from "mobx-react-lite";
+import recipient_store from "stores/recipient_store";
 import { stringToColor } from "utils/string";
 
-export type RecipientListProps<T> = {
-  selected_item: T;
-  items: T[];
-  select_item: (item: T) => void;
-  delete_item?: (item: T) => void;
+type RecipientListProps = {
+  select_recipient_callback?: (recipient: string) => void;
 };
 
-export const RecipientList = <T extends string>(
-  props: RecipientListProps<T>
-) => {
-  const handle_click = (item: T) => () => props.select_item(item);
-  const handle_delete = props.delete_item ? props.delete_item : () => {};
-
+export const RecipientList = observer((props: RecipientListProps) => {
   return (
     <ul className="menu">
-      {props.items.map((item) => (
-        <li key={item} onClick={handle_click(item)} className={`flex flex-row`}>
+      {recipient_store.recipients.map((recipient) => (
+        <li
+          key={recipient}
+          onClick={() => {
+            props.select_recipient_callback?.(recipient);
+            recipient_store.set_recipient(recipient);
+          }}
+          className={`flex flex-row`}
+        >
           <a
             className={`
             w-[80%] rounded-t
-            ${item === props.selected_item ? "active" : ""}
+            ${recipient === recipient_store.recipient ? "active" : ""}
           `}
           >
             <svg width="48" height="48" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="24" fill={stringToColor(item)} />
+              <circle cx="24" cy="24" r="24" fill={stringToColor(recipient)} />
             </svg>
             <div>
-              <strong>{item}</strong>
+              <strong>{recipient}</strong>
             </div>
-            {props.delete_item && (
-              <span
-                className="btn btn-link btn-sm text-white"
-                onClick={() => handle_delete(item)}
-              >
-                <i className="icon icon-cross"></i>
-                Delete
-              </span>
-            )}
+            <span
+              className="btn btn-link btn-sm text-white"
+              onClick={() => {
+                if (!window.confirm(`Delete ${recipient}?`)) {
+                  return;
+                }
+                recipient_store.delete_recipient(recipient);
+              }}
+            >
+              <i className="icon icon-cross"></i>
+              Delete
+            </span>
           </a>
         </li>
       ))}
     </ul>
   );
-};
+});
