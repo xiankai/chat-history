@@ -44,7 +44,7 @@ export const Search = () => {
 
       <div className="grid grid-cols-4">
         <div className="col-span-1">
-          <div className="ml-10 mb-0">
+          <div className="mb-10">
             <label className="label">Search Query (min length of 2)</label>
             <input
               value={search}

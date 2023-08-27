@@ -4,21 +4,24 @@ import recipient_store from "stores/recipient_store";
 
 export const SourceList = observer(() => {
   return (
-    <>
-      {config_store.get_formatters().map((formatter) => (
-        <div
-          key={formatter.value}
-          className={`tab tab-lifted tab-lg ${
-            formatter.value === recipient_store.source ? "tab-active" : ""
-          }`}
-          onClick={() => {
-            recipient_store.set_source(formatter.value);
-            recipient_store.fetch_recipients();
-          }}
-        >
-          {formatter.label}
-        </div>
-      ))}
-    </>
+    <div>
+      <h3>Contact List</h3>
+      <div className="tabs">
+        {config_store.get_formatters().map((formatter) => (
+          <div
+            key={formatter.value}
+            className={`tab tab-lifted tab-lg ${
+              formatter.value === recipient_store.source ? "tab-active" : ""
+            }`}
+            onClick={() => {
+              recipient_store.set_source(formatter.value);
+              recipient_store.fetch_recipients();
+            }}
+          >
+            {formatter.label}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 });

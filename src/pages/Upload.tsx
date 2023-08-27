@@ -132,14 +132,6 @@ export const Upload = () => {
         />
       </label>
 
-      <div className="flex flex-col w-full border-opacity-50">
-        <div className="divider">Settings</div>
-      </div>
-
-      <div className="flex flex-col w-full border-opacity-50">
-        <div className="divider"></div>
-      </div>
-
       <button className="btn btn-primary" onClick={handleUpload}>
         Start
       </button>

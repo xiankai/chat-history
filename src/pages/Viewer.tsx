@@ -83,12 +83,10 @@ export const Viewer = observer(() => {
       {/* This makes the page take up all the space minus 38px from the header and 42px from the header's margins */}
       <div
         className="grid grid-cols-4 h-[calc(100%-80px)]"
-        style={{ gridTemplateRows: "50px 1fr" }}
+        style={{ gridTemplateRows: "90px 1fr" }} // 90px is from <SourceList />
       >
         <div className="col-span-1 row-span-1">
-          <div className="tabs">
-            <SourceList />
-          </div>
+          <SourceList />
         </div>
         <div className="col-span-1 row-start-2">
           <RecipientList
