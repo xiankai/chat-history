@@ -18,7 +18,7 @@ export const Upload = () => {
           (e?.target?.result as string)?.trim()
         );
 
-        const progress_tracker_callback =
+        const { progress_tracker_callback } =
           config_store.datasource_instance.bulkAddToStorage(
             config_store
               .get_formatter_instance(SupportedFormatter.MSN)
@@ -68,7 +68,7 @@ export const Upload = () => {
             (e?.target?.result as string)?.trim()
           );
 
-        const progress_tracker_callback =
+        const { progress_tracker_callback } =
           config_store.datasource_instance.bulkAddToStorage(
             config_store
               .get_formatter_instance(SupportedFormatter.Messenger)

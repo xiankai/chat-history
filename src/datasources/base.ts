@@ -138,5 +138,8 @@ export interface AsyncBaseDatasource {
     source: Source,
     messages: ChatLogFormat[],
     tokenizer?: (message: string) => Promise<string[]>
-  ): ProgressTrackerCallback;
+  ): {
+    promise: Promise<any>;
+    progress_tracker_callback: ProgressTrackerCallback;
+  };
 }

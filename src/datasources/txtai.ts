@@ -96,7 +96,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     messages: ChatLogFormat[]
   ) {
     let finished: string | number = 0;
-    DefaultService.indexIndexPost({
+    const promise = DefaultService.indexIndexPost({
       requestBody: {
         source,
         recipient,
@@ -112,7 +112,10 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     })
       .then(() => (finished = messages.length))
       .catch((err) => (finished = JSON.stringify(err)));
-    return () => finished;
+    return {
+      promise,
+      progress_tracker_callback: () => finished,
+    };
   }
 
   async retrieveBucketListFromStorage(source: Source): Promise<Recipient[]> {

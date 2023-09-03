@@ -80,7 +80,8 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
       date: DateBucketReference;
       index: string;
     }[] = [];
-    (async () => {
+
+    const promise = (async () => {
       for (const key in grouped_messages) {
         const messages = grouped_messages[key];
         for (const index in messages) {
@@ -105,25 +106,28 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
           progress++;
         }
       }
+
+      setMany(Object.entries(insertedMessages), logStore);
+      insertedTerms.forEach(({ term, recipient, date, index }, i) => {
+        update(
+          term,
+          (existingReferences) => {
+            if (Array.isArray(existingReferences)) {
+              existingReferences.push([recipient, date, index]);
+              return existingReferences;
+            } else {
+              return [[recipient, date, index]];
+            }
+          },
+          termStore
+        );
+      });
     })();
 
-    setMany(Object.entries(insertedMessages), logStore);
-    insertedTerms.forEach(({ term, recipient, date, index }, i) => {
-      update(
-        term,
-        (existingReferences) => {
-          if (Array.isArray(existingReferences)) {
-            existingReferences.push([recipient, date, index]);
-            return existingReferences;
-          } else {
-            return [[recipient, date, index]];
-          }
-        },
-        termStore
-      );
-    });
-
-    return progress_tracker_callback;
+    return {
+      promise,
+      progress_tracker_callback,
+    };
   }
 
   async retrieveBucketListFromStorage(source: Source): Promise<Recipient[]> {

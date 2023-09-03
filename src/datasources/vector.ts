@@ -109,7 +109,12 @@ export default class VectorDatasource implements AsyncBaseDatasource {
     }));
 
     let progress = 0;
-    this.db.addDocuments(docs).then(() => (progress = messages.length));
-    return () => progress;
+    const promise = this.db
+      .addDocuments(docs)
+      .then(() => (progress = messages.length));
+    return {
+      promise,
+      progress_tracker_callback: () => progress,
+    };
   }
 }
