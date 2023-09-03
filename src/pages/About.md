@@ -1,35 +1,50 @@
 # What
 
-An app for you to store your chat histories from different applications in one place.
+An app for you to make chat history from various applications, searchable.
 
 # Why
 
-Chat applications, like social media sites, rise and fall with the the advent of their popularity, the company hosting them, and many other factors. Unfortunately for us consumers, such information is kept in corporate silos at the whim of their stock price.
-Sometimes when sunsetting a chat app, they offer chat log dumps. But those can be impracticable to search through.
+To have control over your data, provided as long as you are able to export it.
 
 # How
 
-## Input
+1. Providing the chat log files
 
-It takes the log files that you provide and a line format to help it parse the logs.
+   Currently, 2 chat log file formats are supported - facebook log dump, or MSN `.txt` files (not MSN `.xml` files)
 
-## Tokenization
+   You are able to provide them by uploading them directly (`Upload` tab) or pointing to the location of the root folder containing these files (`Filesystem`)
 
-To cater to future inputs, it uses a simple whitespace delimited method for indexing messages. ## Indexing The chat log files are stored in CSV format, with the first 4 columns being timestamp, message, source and source metadata.
+2. Indexing and making chat history searchable
 
-## File structure
+   4 options have been explored thus far:
 
-The files are split by day, and grouped into year and month buckets.
+   - Whitespace (words will be matched directly)
+   - spaCy (using their `en_web_core_sm` model, loaded directly in the browser via pyodide/webasm)
+   - ~~OpenAI's API (via `langchain`)~~ (abandoned)
+   - Vector (using the sentence transformer model `sentence-transformers/paraphrase-MiniLM-L3-v2`, loaded via a backend API)
 
-## Searching
+3. Where data will be stored
 
-It has 3 main different sources of data
+   4 options have been explored thus far:
 
-1. The log files you upload in this session.
-2. The indexed chat data that you have already uploaded before.
-3. Third-party chat history APIs that you have authenticated with.
+   - In-memory storage (no persistence, only for the browser session)
+   - Browser `localStorage` API
+   - Browser `IndexedDB` API (via `idb-keyval`)
+   - ~~In-memory vector database (via `langchain` and `chroma`)~~
+   - Backend (via `txtai`, hosted with `ModalLabs`)
 
-## Viewing
+4. How data is secured
 
-It will be in typical chat app form, and searching will make you jump to
-the particular timestamp. Should also support calendar view.
+   The auth implementation is provided by `firebase`/`firebase-ui`.
+
+   You have to sign in with an identity provider (currently Google is only provided), and then data provided is tied to that identity.
+
+   - Facebook requires a business process for approval, so scrapping that for now.
+
+5. How chat history is presented (`Viewer` tab)
+
+   I tried to recreate the chat interface from Facebook Messenger, including reactions, images and videos.
+
+6. Search interface (`Search` tab)
+
+   HTML5 Datepicker for simplicity
