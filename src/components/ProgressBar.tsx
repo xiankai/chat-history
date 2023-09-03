@@ -16,27 +16,51 @@ export const ProgressBar = ({
   text_template,
   interval = 1000,
 }: ProgressBarProps) => {
-  const [current_progress, set_current_progress] = useState(0);
+  const [current_progress, set_current_progress] = useState<number | null>(
+    null
+  );
   const [error_message, set_error_message] = useState("");
   const [duration_ms, set_duration_ms] = useState(0);
 
+  // initial timer is just to wait for `progress_tracker_callback` to return non-null
   useEffect(() => {
     const interval_id = setInterval(() => {
-      const current_progress = progress_tracker_callback();
-      if (typeof current_progress === "string") {
-        set_error_message(current_progress);
+      const updated_progress = progress_tracker_callback();
+      if (updated_progress !== null) {
         clearInterval(interval_id);
-      } else {
-        set_current_progress(current_progress);
-        if (current_progress >= total_progress) {
+        if (typeof updated_progress === "string") {
+          set_error_message(updated_progress);
+        } else {
+          set_current_progress(updated_progress);
+        }
+      }
+    }, interval);
+  }, []);
+
+  // this timer only starts when `progress_tracker_callback` returns non-null
+  useEffect(() => {
+    const updated_progress = progress_tracker_callback();
+    if (updated_progress === null) return;
+
+    const interval_id = setInterval(() => {
+      set_duration_ms((prev) => prev + interval);
+      const updated_progress = progress_tracker_callback();
+
+      if (typeof updated_progress === "string") {
+        set_error_message(updated_progress);
+
+        // we stop the timer if there is an error
+        clearInterval(interval_id);
+      } else if (typeof updated_progress === "number") {
+        set_current_progress(updated_progress);
+
+        // we stop the timer if progress is reached
+        if (updated_progress >= total_progress) {
           clearInterval(interval_id);
         }
       }
-      set_duration_ms((duration_ms) => {
-        return duration_ms + interval;
-      });
     }, interval);
-  }, []);
+  }, [progress_tracker_callback]);
 
   return (
     <>
@@ -47,10 +71,10 @@ export const ProgressBar = ({
           </span>
         )}
         {text_template
-          .replace("{current}", current_progress.toLocaleString())
+          .replace("{current}", (current_progress || 0).toLocaleString())
           .replace("{total}", total_progress.toLocaleString())}
       </p>
-      <progress value={current_progress} max={total_progress}></progress>
+      <progress value={current_progress || 0} max={total_progress}></progress>
       <span className="label">
         Time elapsed {formatDurationFromMilliseconds(duration_ms)}
       </span>

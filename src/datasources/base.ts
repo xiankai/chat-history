@@ -56,7 +56,7 @@ export type SearchResultByDate = Record<DateString, ChatLogFormat[]>;
 
 export type Recipient = string;
 
-export type ProgressTrackerCallback = () => number | string;
+export type ProgressTrackerCallback = () => number | string | null;
 
 export default interface BaseDatasource {
   addToIndex(index: Index, terms: Term[]): void;
