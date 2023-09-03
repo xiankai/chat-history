@@ -50,48 +50,77 @@ export const Filesystem = () => {
     }
     const formatter_instance = config_store.get_formatter_instance(formatter);
     handle_start();
-    Promise.all(
-      filesystems.map(async ([, directoryHandle]) => {
-        const fileHandles = await getDirectoryFilesRecursively(
-          directoryHandle,
-          formatter_instance.isValidFileFormat
-        );
 
-        return Promise.all(
-          fileHandles.map(async (fileHandle) => {
-            const file = await fileHandle.getFile();
-            const contents = await file.text();
+    // collect all the params first (promises)
+    const params_array = filesystems.map(async ([, directoryHandle]) => {
+      const fileHandles = await getDirectoryFilesRecursively(
+        directoryHandle.name,
+        directoryHandle,
+        formatter_instance.isValidFileFormat
+      );
 
-            const { metadata, messages } = formatter_instance.formatChatLog(
-              contents.trim()
-            );
+      return await Promise.all(
+        fileHandles.map(async ({ directoryName, fileHandle }) => {
+          const file = await fileHandle.getFile();
+          const contents = await file.text();
 
-            const progress_tracker_callback =
-              config_store.datasource_instance.bulkAddToStorage(
-                formatter_instance.getRecipient(metadata),
-                formatter,
-                messages
-              );
+          const { metadata, messages } = formatter_instance.formatChatLog(
+            contents.trim()
+          );
 
-            return {
-              index: file.name,
-              text_template: `Processed {current} out of {total} records for ${file.name}`,
-              progress_tracker_callback,
-              total_progress: messages.length,
-            };
-          })
-        ).then((progress_bars) => {
-          set_progress_bars(progress_bars);
-        });
-      })
-    ).finally(handle_end);
+          return {
+            index: `${directoryName}/${file.name}`,
+            recipient: formatter_instance.getRecipient(metadata),
+            formatter,
+            messages,
+          };
+        })
+      );
+    });
+
+    // await the promises to get the actual params, then flatten
+    const flat_params_array = (await Promise.all(params_array.flat())).flat();
+
+    // initial progress bar setup
+    set_progress_bars(
+      flat_params_array.map((params) => ({
+        index: params.index,
+        text_template: `Processed {current} out of {total} records for ${params.index}`,
+        progress_tracker_callback: () => null,
+        total_progress: params.messages.length,
+      }))
+    );
+
+    // sequential execution
+    flat_params_array.reduce((prev, curr, index) => {
+      return prev.then(() => {
+        // call the api
+        const { progress_tracker_callback, promise } =
+          config_store.datasource_instance.bulkAddToStorage(
+            curr.recipient,
+            curr.formatter,
+            curr.messages
+          );
+
+        // update progress bar callback
+        set_progress_bars((progress_bars) => [
+          ...progress_bars.slice(0, index),
+          {
+            ...progress_bars[index],
+            progress_tracker_callback,
+          },
+          ...progress_bars.slice(index + 1),
+        ]);
+
+        // return promise to be thenned/chained
+        return promise;
+      });
+    }, Promise.resolve());
   };
 
   const handle_start = () => {
     set_progress_bars([]);
   };
-
-  const handle_end = () => {};
 
   return (
     <>
