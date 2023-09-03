@@ -12,7 +12,11 @@ export const DatePicker = ({
   const [value, setValue] = useState("");
   useEffect(() => {
     const validDate = formatDate(date);
-    if (validDate) setValue(validDate);
+    if (validDate) {
+      setValue(validDate);
+    } else {
+      setValue("");
+    }
   }, [value, date]);
 
   return (
