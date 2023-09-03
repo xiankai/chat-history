@@ -6,6 +6,7 @@ import { getDirectoryFilesRecursively } from "utils/filetree";
 import { formatDurationFromSeconds } from "utils/string";
 import config_store from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
+import Cookies from "js-cookie";
 
 type Data = [SupportedFormatter, FileSystemDirectoryHandle];
 
@@ -94,6 +95,11 @@ export const Filesystem = () => {
     // sequential execution
     flat_params_array.reduce((prev, curr, index) => {
       return prev.then(() => {
+        // in case of auth failure, early return
+        if (!Cookies.get("firebase_token")) {
+          return;
+        }
+
         // call the api
         const { progress_tracker_callback, promise } =
           config_store.datasource_instance.bulkAddToStorage(
