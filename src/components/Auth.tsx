@@ -14,6 +14,12 @@ import {
   VITE_FIREBASE_AUTH_CONFIG_MEASUREMENT_ID,
 } from "../constants";
 
+declare global {
+  interface Window {
+    signout_function: () => void;
+  }
+}
+
 export const Auth = () => {
   const [loading, set_loading] = useState(true);
   const [user, set_user] = useState<User | null>(null);
@@ -82,9 +88,10 @@ export const Auth = () => {
       }
     );
 
-    set_signout_handler(() => () => {
+    window.signout_function = () => {
       firebaseAuth.signOut().then(() => set_user(null));
-    });
+      Cookies.remove("firebase_token");
+    };
 
     // Render the firebaseUi Widget.
     // @ts-ignore
@@ -121,7 +128,7 @@ export const Auth = () => {
               </p>
             </li>
             <li>
-              <button className="btn" onClick={signout_handler}>
+              <button className="btn" onClick={window.signout_function}>
                 Sign Out
               </button>
             </li>

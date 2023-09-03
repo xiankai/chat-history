@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import Cookies from 'js-cookie';
 import { ApiError } from './ApiError';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import type { ApiResult } from './ApiResult';
@@ -261,6 +262,7 @@ const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): void =>
     const error = errors[result.status];
     if (result.status === 401) {
         alert('You need to be signed in.')
+        window.signout_function();
     }
 
     if (error) {
