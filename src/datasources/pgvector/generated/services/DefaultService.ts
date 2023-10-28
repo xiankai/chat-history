@@ -39,6 +39,31 @@ export class DefaultService {
     }
 
     /**
+     * Delete
+     * @returns void
+     * @throws ApiError
+     */
+    public static deleteDelete({
+        source,
+        recipient,
+    }: {
+        source: string,
+        recipient: string,
+    }): CancelablePromise<void> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/delete',
+            query: {
+                'source': source,
+                'recipient': recipient,
+            },
+            errors: {
+                400: `Bad request syntax or unsupported method`,
+            },
+        });
+    }
+
+    /**
      * FirstDay
      * @returns DocumentResponse Request fulfilled, document follows
      * @throws ApiError

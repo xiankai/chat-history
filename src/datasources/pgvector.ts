@@ -90,8 +90,14 @@ export default class PgvectorDatasource implements AsyncBaseDatasource {
       this.formatMessageResponse(document, source)
     );
   }
-  deleteBucketFromStorage(recipient: string, source: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteBucketFromStorage(
+    recipient: string,
+    source: string
+  ): Promise<void> {
+    const response = await DefaultService.deleteDelete({
+      recipient,
+      source,
+    });
   }
   retrieveMessageFromStorage(
     recipient: string,
