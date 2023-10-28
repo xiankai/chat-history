@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "generate-client": "openapi -i http://127.0.0.1:8000/openapi.json -o ./src/datasources/txtai/generated --useOptions",
+    "generate-pgvector-client": "openapi -i http://127.0.0.1:8000/schema/openapi.json -o ./src/datasources/pgvector/generated --useOptions",
     "test": "jest",
     "dev": "vite",
     "build": "tsc && vite build",

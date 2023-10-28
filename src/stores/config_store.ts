@@ -10,6 +10,7 @@ import WhitespaceTokenizer from "tokenizers/whitespace";
 import MSN from "formatter/msn";
 import Messenger from "formatter/messenger";
 import BaseFormatter, { SupportedFormatter } from "formatter/base";
+import PgvectorDatasource from "datasources/pgvector";
 
 export type ConfigFormat = {
   data_key: string;
@@ -47,6 +48,13 @@ class config_store {
       tooltip:
         "Uses an implementation of the txtai vector database hosted via modal.",
       instance: new TxtaiDatasource(),
+    },
+    {
+      data_key: "pgvector",
+      label: "pgvector vector database",
+      tooltip:
+        "Uses an implementation of pgvector vector database hosted via k8s/docker.",
+      instance: new PgvectorDatasource(),
     },
   ];
   datasource: ConfigFormat["data_key"];
@@ -110,7 +118,7 @@ class config_store {
   constructor() {
     makeAutoObservable(this);
 
-    this.datasource = "txtai";
+    this.datasource = "pgvector";
     this.tokenizer = "vector";
   }
 }
