@@ -1,6 +1,6 @@
 import { ProgressTrackerCallback } from "datasources/base";
 import { useEffect, useState } from "react";
-import { formatDurationFromMilliseconds } from "utils/string";
+import { formatDurationFromMilliseconds } from "utils/date";
 
 export type ProgressBarProps = {
   index: string; // Unique identifier to ensure we only render this progress bar once. eg. file name.

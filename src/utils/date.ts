@@ -31,7 +31,11 @@ export const parseDateIntoDateBucket = (date: Date): DateBucketReference => {
 export const parseDateBucketIntoDateString = (
   date_bucket: DateBucketReference
 ): DateString => {
-  return [date_bucket.year, date_bucket.month, date_bucket.day].join("-");
+  return [
+    date_bucket.year,
+    date_bucket.month.toString().padStart(2, "0"),
+    date_bucket.day.toString().padStart(2, "0"),
+  ].join("-");
 };
 
 export const isValidDate = (date?: Date): date is Date => {
@@ -51,3 +55,9 @@ export const formatDate = (date?: Date): string => {
     date.getDate().toString().padStart(2, "0"),
   ].join("-");
 };
+
+export const formatDurationFromSeconds = (seconds: number) =>
+  new Date(1000 * seconds).toISOString().substring(11, 19);
+
+export const formatDurationFromMilliseconds = (milliseconds: number) =>
+  new Date(milliseconds).toISOString().substring(11, 19);

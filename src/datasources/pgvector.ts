@@ -1,4 +1,7 @@
-import { parseTimestampIntoDateString } from "utils/date";
+import {
+  parseDateBucketIntoDateString,
+  parseTimestampIntoDateString,
+} from "utils/date";
 import {
   AsyncBaseDatasource,
   ChatLogFormat,
@@ -9,11 +12,18 @@ import {
   ChatLogFormatTimestamp,
   DateBucketReference,
   Index,
+  Message,
   ProgressTrackerCallback,
   SearchResultByDate,
+  Source,
   SourceMetadata,
 } from "./base";
-import { DefaultService, OpenAPI } from "./pgvector/generated";
+import {
+  DefaultService,
+  DocumentData,
+  DocumentResponse,
+  OpenAPI,
+} from "./pgvector/generated";
 import { VITE_PGVECTOR_URL } from "../constants";
 
 export default class PgvectorDatasource implements AsyncBaseDatasource {
@@ -38,24 +48,46 @@ export default class PgvectorDatasource implements AsyncBaseDatasource {
   async retrieveBucketListFromStorage(source: string): Promise<string[]> {
     return DefaultService.recipientsRecipients({ source });
   }
-  retrieveBucketFromStorage(
+  async retrieveBucketFromStorage(
     recipient: string,
     source: string,
     date: DateBucketReference
   ): Promise<ChatLogFormat[]> {
-    throw new Error("Method not implemented.");
+    const response = await DefaultService.dayDay({
+      recipient,
+      source,
+      day: parseDateBucketIntoDateString(date),
+    });
+
+    return response.map((document) =>
+      this.formatMessageResponse(document, source)
+    );
   }
-  retrieveFirstBucketFromStorage(
+  async retrieveFirstBucketFromStorage(
     recipient: string,
     source: string
   ): Promise<ChatLogFormat[]> {
-    throw new Error("Method not implemented.");
+    const response = await DefaultService.firstDayFirstDay({
+      recipient,
+      source,
+    });
+
+    return response.map((document) =>
+      this.formatMessageResponse(document, source)
+    );
   }
-  retrieveLastBucketFromStorage(
+  async retrieveLastBucketFromStorage(
     recipient: string,
     source: string
   ): Promise<ChatLogFormat[]> {
-    throw new Error("Method not implemented.");
+    const response = await DefaultService.lastDayLastDay({
+      recipient,
+      source,
+    });
+
+    return response.map((document) =>
+      this.formatMessageResponse(document, source)
+    );
   }
   deleteBucketFromStorage(recipient: string, source: string): Promise<void> {
     throw new Error("Method not implemented.");
@@ -89,16 +121,18 @@ export default class PgvectorDatasource implements AsyncBaseDatasource {
   } {
     let finished: string | number = 0;
     const promise = DefaultService.indexIndex({
-      docs: messages.map((message) => ({
-        text: message[ChatLogFormatMessage],
-        date: parseTimestampIntoDateString(message[ChatLogFormatTimestamp]),
-        sender: message[ChatLogFormatSender],
-        timestamp: +message[ChatLogFormatTimestamp] / 1000,
-        line_number: message[ChatLogFormatLineNumber],
-        source_metadata: message[ChatLogFormatSourceMetadata],
-      })),
-      recipient,
-      source,
+      requestBody: {
+        docs: messages.map((message) => ({
+          text: message[ChatLogFormatMessage],
+          date: parseTimestampIntoDateString(message[ChatLogFormatTimestamp]),
+          sender: message[ChatLogFormatSender],
+          timestamp: +message[ChatLogFormatTimestamp],
+          line_number: message[ChatLogFormatLineNumber],
+          source_metadata: message[ChatLogFormatSourceMetadata],
+        })),
+        recipient,
+        source,
+      },
     })
       .then(() => (finished = messages.length))
       .catch((err) => (finished = JSON.stringify(err)));
@@ -106,5 +140,19 @@ export default class PgvectorDatasource implements AsyncBaseDatasource {
       promise,
       progress_tracker_callback: () => finished,
     };
+  }
+
+  private formatMessageResponse(
+    document: DocumentResponse,
+    source: Source
+  ): ChatLogFormat {
+    return [
+      document.line_number,
+      new Date(document.timestamp),
+      document.text,
+      source,
+      document.source_metadata,
+      document.sender,
+    ];
   }
 }

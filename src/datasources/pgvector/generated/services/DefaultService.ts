@@ -1,7 +1,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DocumentData } from '../models/DocumentData';
+import type { DocumentResponse } from '../models/DocumentResponse';
+import type { IndexRequest } from '../models/IndexRequest';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -10,26 +11,97 @@ import { request as __request } from '../core/request';
 export class DefaultService {
 
     /**
+     * Day
+     * @returns DocumentResponse Request fulfilled, document follows
+     * @throws ApiError
+     */
+    public static dayDay({
+        day,
+        source,
+        recipient,
+    }: {
+        day: string,
+        source: string,
+        recipient: string,
+    }): CancelablePromise<Array<DocumentResponse>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/day',
+            query: {
+                'day': day,
+                'source': source,
+                'recipient': recipient,
+            },
+            errors: {
+                400: `Bad request syntax or unsupported method`,
+            },
+        });
+    }
+
+    /**
+     * FirstDay
+     * @returns DocumentResponse Request fulfilled, document follows
+     * @throws ApiError
+     */
+    public static firstDayFirstDay({
+        source,
+        recipient,
+    }: {
+        source: string,
+        recipient: string,
+    }): CancelablePromise<Array<DocumentResponse>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/first_day',
+            query: {
+                'source': source,
+                'recipient': recipient,
+            },
+            errors: {
+                400: `Bad request syntax or unsupported method`,
+            },
+        });
+    }
+
+    /**
      * Index
      * @returns any Document created, URL follows
      * @throws ApiError
      */
     public static indexIndex({
-        source,
-        recipient,
-        docs,
+        requestBody,
     }: {
-        source: string,
-        recipient: string,
-        docs: Array<DocumentData>,
+        requestBody: IndexRequest,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/index',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad request syntax or unsupported method`,
+            },
+        });
+    }
+
+    /**
+     * LastDay
+     * @returns DocumentResponse Request fulfilled, document follows
+     * @throws ApiError
+     */
+    public static lastDayLastDay({
+        source,
+        recipient,
+    }: {
+        source: string,
+        recipient: string,
+    }): CancelablePromise<Array<DocumentResponse>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/last_day',
             query: {
                 'source': source,
                 'recipient': recipient,
-                'docs': docs,
             },
             errors: {
                 400: `Bad request syntax or unsupported method`,

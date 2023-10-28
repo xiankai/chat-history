@@ -4,12 +4,6 @@ export const fixMessengerExport = (message: string) => {
   return decodeURIComponent(escape(message));
 };
 
-export const formatDurationFromSeconds = (seconds: number) =>
-  new Date(1000 * seconds).toISOString().substring(11, 19);
-
-export const formatDurationFromMilliseconds = (milliseconds: number) =>
-  new Date(milliseconds).toISOString().substring(11, 19);
-
 // https://stackoverflow.com/a/16348977/1097483
 export const stringToColor = (str: string) => {
   var hash = 0;

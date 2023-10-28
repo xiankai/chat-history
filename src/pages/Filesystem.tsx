@@ -3,7 +3,7 @@ import { DirectoryViewer } from "components/DirectoryViewer";
 import { SupportedFormatter, supported_formatters } from "formatter/base";
 import { Fragment, useEffect, useState } from "react";
 import { getDirectoryFilesRecursively } from "utils/filetree";
-import { formatDurationFromSeconds } from "utils/string";
+import { formatDurationFromSeconds } from "utils/date";
 import config_store from "stores/config_store";
 import { ProgressBar, ProgressBarProps } from "components/ProgressBar";
 import Cookies from "js-cookie";
@@ -96,9 +96,9 @@ export const Filesystem = () => {
     flat_params_array.reduce((prev, curr, index) => {
       return prev.then(() => {
         // in case of auth failure, early return
-        if (!Cookies.get("firebase_token")) {
-          return;
-        }
+        // if (!Cookies.get("firebase_token")) {
+        //   return;
+        // }
 
         // call the api
         const { progress_tracker_callback, promise } =

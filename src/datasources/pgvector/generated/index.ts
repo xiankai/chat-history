@@ -7,5 +7,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { DocumentData } from './models/DocumentData';
+export type { DocumentResponse } from './models/DocumentResponse';
+export type { IndexRequest } from './models/IndexRequest';
 
 export { DefaultService } from './services/DefaultService';
