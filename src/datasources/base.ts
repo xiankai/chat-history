@@ -83,8 +83,6 @@ export default interface BaseDatasource {
     date: DateBucketReference,
     message_id: number
   ): ChatLogFormat;
-
-  searchStorage(query: SearchQuery): ChatLogFormat[];
 }
 
 export interface AsyncBaseDatasource {
@@ -126,8 +124,7 @@ export interface AsyncBaseDatasource {
     message_id: number
   ): Promise<ChatLogFormat>;
 
-  searchStorage(query: SearchQuery, source: Source): Promise<ChatLogFormat[]>;
-  searchStorageByDate(
+  search(
     query: SearchQuery,
     source: Source,
     recipient: Recipient

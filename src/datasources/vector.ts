@@ -78,10 +78,7 @@ export default class VectorDatasource implements AsyncBaseDatasource {
   ): Promise<ChatLogFormat> {
     throw new Error("Method not implemented.");
   }
-  searchStorage(query: string): Promise<ChatLogFormat[]> {
-    throw new Error("Method not implemented.");
-  }
-  searchStorageByDate(query: string): Promise<SearchResultByDate> {
+  search(query: string): Promise<SearchResultByDate> {
     throw new Error("Method not implemented.");
   }
 

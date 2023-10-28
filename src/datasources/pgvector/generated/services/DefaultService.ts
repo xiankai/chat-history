@@ -131,4 +131,38 @@ export class DefaultService {
         });
     }
 
+    /**
+     * Search
+     * @returns DocumentResponse Request fulfilled, document follows
+     * @throws ApiError
+     */
+    public static searchSearch({
+        q,
+        fromDate,
+        toDate,
+        recipient,
+        source,
+    }: {
+        q: string,
+        fromDate?: (null | string),
+        toDate?: (null | string),
+        recipient?: (null | string),
+        source?: (null | string),
+    }): CancelablePromise<Array<DocumentResponse>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/search',
+            query: {
+                'q': q,
+                'from_date': fromDate,
+                'to_date': toDate,
+                'recipient': recipient,
+                'source': source,
+            },
+            errors: {
+                400: `Bad request syntax or unsupported method`,
+            },
+        });
+    }
+
 }

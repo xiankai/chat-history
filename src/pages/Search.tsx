@@ -30,11 +30,7 @@ export const Search = () => {
     if (!recipient_store.recipient) return;
 
     config_store.datasource_instance
-      .searchStorageByDate(
-        search,
-        recipient_store.source,
-        recipient_store.recipient
-      )
+      .search(search, recipient_store.source, recipient_store.recipient)
       .then((data) => set_search_results(data));
   }, [debouncedSearch]);
 

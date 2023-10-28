@@ -175,26 +175,7 @@ export default class IndexedDBDatasource implements AsyncBaseDatasource {
     return date_bucket[inserted_index];
   }
 
-  async searchStorage(
-    query: SearchQuery,
-    source: Source
-  ): Promise<ChatLogFormat[]> {
-    const stored_indices: SearchResult[] = (await get(query, termStore)) || [];
-    const messages = await Promise.all(
-      stored_indices.map(
-        async ([recipient, date, inserted_index]) =>
-          await this.retrieveMessageFromStorage(
-            recipient,
-            source,
-            date,
-            inserted_index
-          )
-      )
-    );
-    return messages.filter(Boolean);
-  }
-
-  async searchStorageByDate(
+  async search(
     query: SearchQuery,
     source: Source,
     recipient: Recipient

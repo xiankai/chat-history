@@ -9,9 +9,7 @@ import BaseDatasource, {
   Message,
   Source,
   SourceMetadata,
-  SearchQuery,
   Index,
-  SearchResult,
   Recipient,
   Sender,
 } from "./base";
@@ -107,13 +105,5 @@ export default class LocalStorageDatasource implements BaseDatasource {
     const stored_logs = this.getStorageItem("logs");
 
     return get(stored_logs, [recipient, this.getDateKey(date), inserted_index]);
-  }
-
-  searchStorage(query: SearchQuery): ChatLogFormat[] {
-    const stored_indices = this.getStorageItem("terms");
-    return ((stored_indices[query] as SearchResult[]) || []).map(
-      ([recipient, date, inserted_index]) =>
-        this.retrieveMessageFromStorage(recipient, date, inserted_index) || []
-    );
   }
 }

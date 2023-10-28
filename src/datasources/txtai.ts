@@ -5,9 +5,7 @@ import {
   SourceMetadata,
   SearchQuery,
   Index,
-  SearchResult,
   Recipient,
-  ChatLogFormatSource,
   ChatLogFormatTimestamp,
   ChatLogFormatMessage,
   SearchResultByDate,
@@ -179,15 +177,7 @@ export default class TxtaiDatasource implements AsyncBaseDatasource {
     throw new Error("Method not implemented.");
   }
 
-  async searchStorage(query: SearchQuery): Promise<ChatLogFormat[]> {
-    const response = await DefaultService.searchSearchGet({
-      q: query,
-    });
-
-    return response.map(this.formatTxtaiResponse);
-  }
-
-  async searchStorageByDate(
+  async search(
     query: SearchQuery,
     source: Source,
     recipient: Recipient

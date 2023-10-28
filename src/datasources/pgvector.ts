@@ -25,6 +25,7 @@ import {
   OpenAPI,
 } from "./pgvector/generated";
 import { VITE_PGVECTOR_URL } from "../constants";
+import { groupBy } from "lodash";
 
 export default class PgvectorDatasource implements AsyncBaseDatasource {
   constructor(base_url = VITE_PGVECTOR_URL) {
@@ -100,15 +101,34 @@ export default class PgvectorDatasource implements AsyncBaseDatasource {
   ): Promise<ChatLogFormat> {
     throw new Error("Method not implemented.");
   }
-  searchStorage(query: string, source: string): Promise<ChatLogFormat[]> {
-    throw new Error("Method not implemented.");
-  }
-  searchStorageByDate(
-    query: string,
+  async search(
+    q: string,
     source: string,
     recipient: string
   ): Promise<SearchResultByDate> {
-    throw new Error("Method not implemented.");
+    const response = await DefaultService.searchSearch({
+      q,
+      recipient,
+      source,
+    });
+
+    // group by date first
+    const grouped_by_date = groupBy(response, (row) =>
+      parseTimestampIntoDateString(new Date(row.timestamp))
+    );
+
+    // apply response formatter
+    const formatted_entries = Object.entries(grouped_by_date).map(
+      ([date, docs]) => [
+        date,
+        docs.map((doc) => this.formatMessageResponse(doc, source)),
+      ]
+    );
+
+    // convert back to object
+    const grouped_by_date_and_formatted = Object.fromEntries(formatted_entries);
+
+    return grouped_by_date_and_formatted;
   }
   bulkAddToStorage(
     recipient: string,

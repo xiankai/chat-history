@@ -9,7 +9,6 @@ import BaseDatasource, {
   Message,
   Source,
   SourceMetadata,
-  SearchQuery,
   Index,
   SearchResult,
   Recipient,
@@ -109,12 +108,5 @@ export default class MemoryDatasource implements BaseDatasource {
       message_index,
     ]);
     return message;
-  }
-
-  searchStorage(query: SearchQuery): ChatLogFormat[] {
-    return ((this.store.index[query] as SearchResult[]) || []).map(
-      ([recipient, date, inserted_index]) =>
-        this.retrieveMessageFromStorage(recipient, date, inserted_index) || []
-    );
   }
 }
